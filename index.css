@@ -65,10 +65,26 @@ h1 {
     background: #fff;
     border-radius: 10px;
     border: 1px solid rgba(175, 47, 47, 0.15);
+    position: relative;
 }
 
 .todo-list li .toggle {
     width: 40px;
     margin-left: -40px;
+}
+
+.todo-list li .div .deleteBtn {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    bottom: 0;
+    width: 27px;
+    height: 27px;
+    margin: auto 0;
+    margin-bottom: 11px;
+    background: url('./removeBtn.png');
+    background-size: cover;
+    border: none;
+    cursor: pointer;
 }
 

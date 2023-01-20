@@ -2,6 +2,7 @@ const addNewNote = document.querySelector('.new-note');
 const list = document.querySelector('.todo-list');
 const footer = document.querySelector('.footer');
 const footerMenu = document.querySelector('.filters');
+const clearCompletedBtn = document.querySelector('.clear-completed');
 
 // ! Ф-ЦИЯ РАНДОМАЙЗЕР СЛУЧАЙНОГО БОЛЬШОГО ЧИСЛА
 function generateRandomId() {
@@ -50,8 +51,23 @@ document.addEventListener('keydown', (event) => {
             <label for="">${newNoteText.join(' ')}</label>
             <button class="deleteBtn"></button>
           </div>`;
+
+        const complitedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
+        if (complitedNotesLink === 'completed') {
+          newListElement.style.display = 'none';
+          list.appendChild(newListElement);
+          addNewNote.value = '';
+
+          const allComplitedNotes = document.querySelectorAll('.complited');
+          const needsToDo = footer.firstElementChild.firstElementChild;
+          needsToDo.innerHTML = list.children.length - allComplitedNotes.length;
+        }
         list.appendChild(newListElement);
         addNewNote.value = '';
+
+        const allComplitedNotes = document.querySelectorAll('.complited');
+        const needsToDo = footer.firstElementChild.firstElementChild;
+        needsToDo.innerHTML = list.children.length - allComplitedNotes.length;
       } else {
         addNewNote.value = '';
       }
@@ -84,7 +100,7 @@ list.addEventListener('change', (event) => {
 list.addEventListener('change', (event) => {
   const allComplitedNotes = document.querySelectorAll('.complited');
   const needsToDo = footer.firstElementChild.firstElementChild;
-  needsToDo.innerHTML = `${allComplitedNotes.length}`;
+  needsToDo.innerHTML = `${list.children.length - allComplitedNotes.length}`;
 
   const activeNotesLink = window.location.href.split('').slice(window.location.href.length - 6).join('');
   const complitedNotes = document.querySelectorAll('input:checked');
@@ -133,4 +149,14 @@ footerMenu.addEventListener('click', (event) => {
       }
     }
   }
+});
+
+// ! УДАЛЕНИЕ ВЫПОЛНЕННЫХ ДЕЛ
+clearCompletedBtn.addEventListener('click', (event) => {
+  const complitedNotes = document.querySelectorAll('input:checked');
+  for (let i = 0; i < complitedNotes.length; i++) {
+    complitedNotes[i].parentNode.parentNode.remove();
+  }
+  const needsToDo = footer.firstElementChild.firstElementChild;
+  needsToDo.innerHTML = '0';
 });

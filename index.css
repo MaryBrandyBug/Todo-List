@@ -88,3 +88,9 @@ h1 {
     cursor: pointer;
 }
 
+.todo-list .complited {
+    text-decoration: line-through;
+    color: lightgrey;
+}
+
+

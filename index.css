@@ -93,4 +93,25 @@ h1 {
     color: lightgrey;
 }
 
+.footer {
+    padding: 10px 15px;
+    height: 20px;
+    background: #fff;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.footer .filters {
+    display: flex;
+    min-width: 200px;
+    margin-top: -1px;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.footer .filters li a {
+    text-decoration: none;
+}
+
 

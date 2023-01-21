@@ -1,8 +1,36 @@
+const myStorage = window.localStorage;
+
 const addNewNote = document.querySelector('.new-note');
 const list = document.querySelector('.todo-list');
 const footer = document.querySelector('.footer');
 const footerMenu = document.querySelector('.filters');
 const clearCompletedBtn = document.querySelector('.clear-completed');
+const counter = document.querySelector('.need-to-do').firstElementChild.innerHTML;
+
+let todoList = [];
+if (myStorage.getItem('todo')) {
+  todoList = JSON.parse(myStorage.getItem('todo'));
+}
+
+// ! Ф-ЦИЯ ПОДГРУЖАЕТ ЗАМЕТКИ ИЗ LOCALSTORAGE
+function showMyNotes() {
+  let notesList = '';
+  todoList.forEach((note) => {
+    notesList += `
+    <li id=${note.id} ${note.checked ? 'class="complited"' : ''}>
+      <div class="div">
+        <input type="checkbox" class="toggle" ${note.checked ? 'checked' : ''}>
+        <label for="">${note.text}</label>
+        <button class="deleteBtn"></button>
+      </div>
+    </li>
+    `;
+    list.innerHTML = notesList;
+    const allComplitedNotes = document.querySelectorAll('.complited');
+    const needsToDo = footer.firstElementChild.firstElementChild;
+    needsToDo.innerHTML = list.children.length - allComplitedNotes.length;
+  });
+}
 
 // ! Ф-ЦИЯ РАНДОМАЙЗЕР СЛУЧАЙНОГО БОЛЬШОГО ЧИСЛА
 function generateRandomId() {
@@ -26,8 +54,27 @@ document.addEventListener('click', (event) => {
           <label for="">${newNoteText.join(' ')}</label>
           <button class="deleteBtn"></button>
         </div>`;
+
+        const newNote = { text: newNoteText.join(' '), checked: false, id: newListElement.id };
+        todoList.push(newNote);
+        myStorage.setItem('todo', JSON.stringify(todoList));
+
+        const complitedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
+        if (complitedNotesLink === 'completed') {
+          newListElement.style.display = 'none';
+          list.appendChild(newListElement);
+          addNewNote.value = '';
+
+          const allComplitedNotes = document.querySelectorAll('.complited');
+          const needsToDo = footer.firstElementChild.firstElementChild;
+          needsToDo.innerHTML = list.children.length - allComplitedNotes.length;
+        }
         list.appendChild(newListElement);
         addNewNote.value = '';
+
+        const allComplitedNotes = document.querySelectorAll('.complited');
+        const needsToDo = footer.firstElementChild.firstElementChild;
+        needsToDo.innerHTML = list.children.length - allComplitedNotes.length;
       }
     } else {
       addNewNote.value = '';
@@ -51,6 +98,10 @@ document.addEventListener('keydown', (event) => {
             <label for="">${newNoteText.join(' ')}</label>
             <button class="deleteBtn"></button>
           </div>`;
+
+        const newNote = { text: newNoteText.join(' '), checked: false, id: newListElement.id };
+        todoList.push(newNote);
+        myStorage.setItem('todo', JSON.stringify(todoList));
 
         const complitedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
         if (complitedNotesLink === 'completed') {
@@ -80,6 +131,11 @@ list.addEventListener('click', (event) => {
   if (event.target.tagName === 'BUTTON') {
     const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
     note.remove();
+    const needsToDo = footer.firstElementChild.firstElementChild;
+    const allComplitedNotes = document.querySelectorAll('.complited');
+    needsToDo.innerHTML = list.children.length - allComplitedNotes.length;
+    todoList = todoList.filter((item) => item.id !== event.target.parentNode.parentNode.id);
+    myStorage.setItem('todo', JSON.stringify(todoList));
   }
 });
 
@@ -89,6 +145,12 @@ list.addEventListener('change', (event) => {
     if (event.target.checked === true) {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.setAttribute('class', 'complited');
+      for (let i = 0; i < todoList.length; i++) {
+        if (todoList[i].id === event.target.parentNode.parentNode.id) {
+          todoList[i].checked = true;
+          myStorage.setItem('todo', JSON.stringify(todoList));
+        }
+      }
     } else {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.classList.remove('complited');
@@ -155,8 +217,14 @@ footerMenu.addEventListener('click', (event) => {
 clearCompletedBtn.addEventListener('click', (event) => {
   const complitedNotes = document.querySelectorAll('input:checked');
   for (let i = 0; i < complitedNotes.length; i++) {
+    const noteId = complitedNotes[i].parentNode.parentNode.id;
+    todoList = todoList.filter((item) => item.id !== noteId);
+    myStorage.setItem('todo', JSON.stringify(todoList));
     complitedNotes[i].parentNode.parentNode.remove();
   }
-  const needsToDo = footer.firstElementChild.firstElementChild;
-  needsToDo.innerHTML = '0';
+});
+
+// ! ПОЯВЛЕНИЕ НИЖНЕГО МЕНЮ
+window.addEventListener('load', (event) => {
+  showMyNotes();
 });

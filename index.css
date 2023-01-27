@@ -86,6 +86,11 @@ h1 {
     background-size: cover;
     border: none;
     cursor: pointer;
+    opacity: -1;
+}
+
+li:hover .div .deleteBtn {
+    opacity: 1;
 }
 
 .todo-list .complited {

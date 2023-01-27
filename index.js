@@ -18,7 +18,7 @@ function generateRandomId() {
   return randomIdNumber;
 }
 
-// ! Ф-ЦИЯ ПРОВЕРКИ НА ДЛИНУ ЗАМЕТКИ
+// ! Ф-ЦИЯ ПРОВЕРКИ НА ДЛИНУ ЗАМЕТКИ (НА ПУСТУЮ ЗАМЕТКУ)
 function checkLength() {
   if (addNewNote.value) {
     const newNoteText = addNewNote.value.split(' ');

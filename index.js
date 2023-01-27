@@ -130,6 +130,12 @@ list.addEventListener('change', (event) => {
     } else {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.classList.remove('complited');
+      for (let i = 0; i < todoList.length; i++) {
+        if (todoList[i].id === note.id) {
+          todoList[i].checked = false;
+          myStorage.setItem('todo', JSON.stringify(todoList));
+        }
+      }
     }
   }
 });

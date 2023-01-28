@@ -86,9 +86,14 @@ h1 {
     background-size: cover;
     border: none;
     cursor: pointer;
+    opacity: -1;
 }
 
-.todo-list .complited {
+li:hover .div .deleteBtn {
+    opacity: 1;
+}
+
+.todo-list .completed {
     text-decoration: line-through;
     color: lightgrey;
 }
@@ -113,6 +118,12 @@ h1 {
 
 .footer .filters li a {
     text-decoration: none;
+    width: 89px;
+    height: 25px;
+}
+
+.footer .filters li a:visited {
+    color: black;
 }
 
 .footer .clear-completed {
@@ -121,4 +132,6 @@ h1 {
     cursor: pointer;
     margin-left: 60px;
 }
+
+
 

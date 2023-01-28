@@ -93,7 +93,7 @@ li:hover .div .deleteBtn {
     opacity: 1;
 }
 
-.todo-list .complited {
+.todo-list .completed {
     text-decoration: line-through;
     color: lightgrey;
 }
@@ -118,6 +118,12 @@ li:hover .div .deleteBtn {
 
 .footer .filters li a {
     text-decoration: none;
+    width: 89px;
+    height: 25px;
+}
+
+.footer .filters li a:visited {
+    color: black;
 }
 
 .footer .clear-completed {
@@ -126,4 +132,6 @@ li:hover .div .deleteBtn {
     cursor: pointer;
     margin-left: 60px;
 }
+
+
 

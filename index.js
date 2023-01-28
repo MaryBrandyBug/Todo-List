@@ -88,6 +88,9 @@ function showMyNotes() {
 document.addEventListener('click', (event) => {
   if (checkLength()) {
     if (event.target.className !== 'new-note') {
+      if (event.target.tagName === 'INPUT') {
+        event.target.checked = !event.target.checked;
+      }
       addNote();
     }
   }

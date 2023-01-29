@@ -5,9 +5,10 @@ const list = document.querySelector('.todo-list');
 const footer = document.querySelector('.footer');
 const footerMenu = document.querySelector('.filters');
 const clearCompletedBtn = document.querySelector('.clear-completed');
-const showCompletedNotes = document.querySelector('.completed-notes');
-const showActiveNotes = document.querySelector('.active-notes');
-const showAllNotes = document.querySelector('.all-notes');
+const completedNotesList = document.querySelector('.completed-notes');
+const activeNotesList = document.querySelector('.active-notes');
+const allNotesList = document.querySelector('.all-notes');
+const toggleAll = document.querySelector('.toggle-all');
 
 let todoList = [];
 if (myStorage.getItem('todo')) {
@@ -54,16 +55,16 @@ function addNote() {
     list.appendChild(newListElement);
     addNewNote.value = '';
 
-    const allcompletedNotes = document.querySelectorAll('.completed');
+    const allCompletedNotes = document.querySelectorAll('.completed');
     const needsToDo = footer.firstElementChild.firstElementChild;
-    needsToDo.innerHTML = list.children.length - allcompletedNotes.length;
+    needsToDo.innerHTML = list.children.length - allCompletedNotes.length;
   }
   list.appendChild(newListElement);
   addNewNote.value = '';
 
-  const allcompletedNotes = document.querySelectorAll('.completed');
+  const allCompletedNotes = document.querySelectorAll('.completed');
   const needsToDo = footer.firstElementChild.firstElementChild;
-  needsToDo.innerHTML = list.children.length - allcompletedNotes.length;
+  needsToDo.innerHTML = list.children.length - allCompletedNotes.length;
   console.log(needsToDo.innerHTML);
 }
 
@@ -81,10 +82,16 @@ function showMyNotes() {
     </li>
     `;
     list.innerHTML = notesList;
-    const allcompletedNotes = document.querySelectorAll('.completed');
+    const allCompletedNotes = document.querySelectorAll('.completed');
     const needsToDo = footer.firstElementChild.firstElementChild;
-    needsToDo.innerHTML = list.children.length - allcompletedNotes.length;
+    needsToDo.innerHTML = list.children.length - allCompletedNotes.length;
   });
+  const completed = document.querySelectorAll('input.toggle:checked');
+  if (completed.length === list.children.length) {
+    toggleAll.checked = true;
+  } else {
+    toggleAll.checked = false;
+  }
 }
 
 // ! ДОБАВЛЕНИЕ ЗАМЕТКИ НА CLICK
@@ -114,8 +121,8 @@ list.addEventListener('click', (event) => {
     const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
     note.remove();
     const needsToDo = footer.firstElementChild.firstElementChild;
-    const allcompletedNotes = document.querySelectorAll('.completed');
-    needsToDo.innerHTML = list.children.length - allcompletedNotes.length;
+    const allCompletedNotes = document.querySelectorAll('.completed');
+    needsToDo.innerHTML = list.children.length - allCompletedNotes.length;
     todoList = todoList.filter((item) => item.id !== event.target.parentNode.parentNode.id);
     myStorage.setItem('todo', JSON.stringify(todoList));
   }
@@ -147,10 +154,10 @@ list.addEventListener('change', (event) => {
 });
 
 // ! ИЗМЕНЕНИЕ СПИСКА ЗАМЕТОК
-list.addEventListener('change', (event) => {
-  const allcompletedNotes = document.querySelectorAll('.completed');
+list.addEventListener('change', () => {
+  const allCompletedNotes = document.querySelectorAll('.completed');
   const needsToDo = footer.firstElementChild.firstElementChild;
-  needsToDo.innerHTML = `${list.children.length - allcompletedNotes.length}`;
+  needsToDo.innerHTML = `${list.children.length - allCompletedNotes.length}`;
 
   const activeNotesLink = window.location.href.split('').slice(window.location.href.length - 6).join('');
   const completedNotes = document.querySelectorAll('input:checked');
@@ -174,10 +181,10 @@ list.addEventListener('change', (event) => {
 // ! АКТИВНЫЕ ЗАМЕТКИ
 footerMenu.addEventListener('click', (event) => {
   if (event.target.tagName === 'A') {
-    const completedNotes = document.querySelectorAll('input:checked');
-    const activeNotes = document.querySelectorAll('input:not(:checked)');
+    const completedNotes = document.querySelectorAll('input.toggle:checked');
+    const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
     if (event.target.innerHTML === 'Active') {
-      for (let j = 1; j < activeNotes.length; j++) {
+      for (let j = 0; j < activeNotes.length; j++) {
         activeNotes[j].parentNode.parentNode.style.display = '';
       }
       for (let i = 0; i < completedNotes.length; i++) {
@@ -187,17 +194,23 @@ footerMenu.addEventListener('click', (event) => {
       for (let i = 0; i < completedNotes.length; i++) {
         completedNotes[i].parentNode.parentNode.style.display = '';
       }
-      for (let j = 1; j < activeNotes.length; j++) {
+      for (let j = 0; j < activeNotes.length; j++) {
         activeNotes[j].parentNode.parentNode.style.display = 'none';
       }
     } else if (event.target.innerHTML === 'All') {
       for (let i = 0; i < completedNotes.length; i++) {
         completedNotes[i].parentNode.parentNode.style.display = '';
       }
-      for (let j = 1; j < activeNotes.length; j++) {
+      for (let j = 0; j < activeNotes.length; j++) {
         activeNotes[j].parentNode.parentNode.style.display = '';
       }
     }
+  }
+  const completed = document.querySelectorAll('input.toggle:checked');
+  if (completed.length === list.children.length) {
+    toggleAll.checked = true;
+  } else {
+    toggleAll.checked = false;
   }
 });
 
@@ -214,32 +227,32 @@ clearCompletedBtn.addEventListener('click', (event) => {
   }
 });
 
-// ! ПОЯВЛЕНИЕ НИЖНЕГО МЕНЮ
+// ! ПОДГРУЗКА ВСЕХ ЗАМЕТОК
 window.addEventListener('load', (event) => {
   showMyNotes();
 });
 
 // ! ПОЯВЛЕНИЕ РАМКИ НА АКТИВНОЙ КНОПКЕ ПРИ ПЕРЕКЛЮЧЕНИИ
-showCompletedNotes.addEventListener('click', () => {
-  showCompletedNotes.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
-  showAllNotes.style.border = 'none';
-  showActiveNotes.style.border = 'none';
+completedNotesList.addEventListener('click', () => {
+  completedNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+  allNotesList.style.border = 'none';
+  activeNotesList.style.border = 'none';
 });
 
-showActiveNotes.addEventListener('click', () => {
-  showActiveNotes.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
-  showCompletedNotes.style.border = 'none';
-  showAllNotes.style.border = 'none';
+activeNotesList.addEventListener('click', () => {
+  activeNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+  completedNotesList.style.border = 'none';
+  allNotesList.style.border = 'none';
 });
 
-showAllNotes.addEventListener('click', () => {
-  showAllNotes.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
-  showActiveNotes.style.border = 'none';
-  showCompletedNotes.style.border = 'none';
+allNotesList.addEventListener('click', () => {
+  allNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+  activeNotesList.style.border = 'none';
+  completedNotesList.style.border = 'none';
 });
 
 // ! РЕНДЕРИМ ВЕРНУЮ СТРАНИЦУ ПРИ ПЕРЕЗАГРУЗКЕ (ALL/ACTIVE/COMPLETED)
-window.addEventListener('load', (event) => {
+window.addEventListener('load', () => {
   const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
   const activeNotesLink = window.location.href.split('').slice(window.location.href.length - 6).join('');
 
@@ -247,9 +260,9 @@ window.addEventListener('load', (event) => {
   const activeNotes = document.querySelectorAll('input:not(:checked)');
 
   if (completedNotesLink === 'completed') {
-    showCompletedNotes.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
-    showAllNotes.style.border = 'none';
-    showActiveNotes.style.border = 'none';
+    completedNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+    allNotesList.style.border = 'none';
+    activeNotesList.style.border = 'none';
     for (let i = 0; i < completedNotes.length; i++) {
       completedNotes[i].parentNode.parentNode.style.display = '';
     }
@@ -257,9 +270,9 @@ window.addEventListener('load', (event) => {
       activeNotes[j].parentNode.parentNode.style.display = 'none';
     }
   } else if (activeNotesLink === 'active') {
-    showActiveNotes.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
-    showCompletedNotes.style.border = 'none';
-    showAllNotes.style.border = 'none';
+    activeNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+    completedNotesList.style.border = 'none';
+    allNotesList.style.border = 'none';
     for (let j = 1; j < activeNotes.length; j++) {
       activeNotes[j].parentNode.parentNode.style.display = '';
     }
@@ -267,8 +280,48 @@ window.addEventListener('load', (event) => {
       completedNotes[i].parentNode.parentNode.style.display = 'none';
     }
   } else {
-    showAllNotes.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
-    showActiveNotes.style.border = 'none';
-    showCompletedNotes.style.border = 'none';
+    allNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+    activeNotesList.style.border = 'none';
+    completedNotesList.style.border = 'none';
+  }
+});
+
+// ! ОТМЕТИТЬ ВСЕ ЗАМЕТКИ
+toggleAll.addEventListener('click', (event) => {
+  const completed = document.querySelectorAll('input.toggle:checked');
+  const uncompleted = document.querySelectorAll('input.toggle:not(:checked)');
+
+  if (completed && uncompleted.length !== 0) {
+    for (let i = 0; i < uncompleted.length; i++) {
+      const noteId = uncompleted[i].parentNode.parentNode.id;
+      uncompleted[i].setAttribute('checked', 'checked');
+      document.getElementById(noteId).setAttribute('class', 'completed');
+      for (let j = 0; j < todoList.length; j++) {
+        if (todoList[j].id === noteId) {
+          todoList[j].checked = true;
+          myStorage.setItem('todo', JSON.stringify(todoList));
+        }
+      }
+    }
+  } else if (completed.legth === 0 && uncompleted.length !== 0) {
+    for (let i = 0; i < uncompleted.length; i++) {
+      const noteId = uncompleted[i].parentNode.parentNode.id;
+      for (let j = 0; j < todoList.length; j++) {
+        if (todoList[j].id === noteId) {
+          todoList[j].checked = true;
+          myStorage.setItem('todo', JSON.stringify(todoList));
+        }
+      }
+    }
+  } else if (completed.legth !== 0 && uncompleted.length === 0) {
+    for (let i = 0; i < completed.length; i++) {
+      const noteId = completed[i].parentNode.parentNode.id;
+      for (let j = 0; j < todoList.length; j++) {
+        if (todoList[j].id === noteId) {
+          todoList[j].checked = false;
+          myStorage.setItem('todo', JSON.stringify(todoList));
+        }
+      }
+    }
   }
 });

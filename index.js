@@ -24,7 +24,7 @@ function renderRightNotes() {
   const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
 
   if (completedNotesLink === 'completed') {
-    completedNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+    completedNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
     allNotesList.style.border = 'none';
     activeNotesList.style.border = 'none';
     for (let i = 0; i < completedNotes.length; i++) {
@@ -34,7 +34,7 @@ function renderRightNotes() {
       activeNotes[j].parentNode.parentNode.style.display = 'none';
     }
   } else if (activeNotesLink === 'active') {
-    activeNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+    activeNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
     completedNotesList.style.border = 'none';
     allNotesList.style.border = 'none';
     for (let j = 0; j < activeNotes.length; j++) {
@@ -44,9 +44,14 @@ function renderRightNotes() {
       completedNotes[i].parentNode.parentNode.style.display = 'none';
     }
   } else {
-    allNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+    allNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
     activeNotesList.style.border = 'none';
     completedNotesList.style.border = 'none';
+  }
+
+  if (list.children.length === 0) {
+    footer.style.display = 'none';
+    toggleAll.checked = false;
   }
 }
 
@@ -100,7 +105,8 @@ function addNote() {
   const allCompletedNotes = document.querySelectorAll('.completed');
   const needsToDo = footer.firstElementChild.firstElementChild;
   needsToDo.innerHTML = list.children.length - allCompletedNotes.length;
-  console.log(needsToDo.innerHTML);
+
+  footer.style.display = '';
 }
 
 // ! Ф-ЦИЯ ПОДГРУЖАЕТ ЗАМЕТКИ ИЗ LOCALSTORAGE
@@ -160,6 +166,11 @@ list.addEventListener('click', (event) => {
     needsToDo.innerHTML = list.children.length - allCompletedNotes.length;
     todoList = todoList.filter((item) => item.id !== event.target.parentNode.parentNode.id);
     myStorage.setItem('todo', JSON.stringify(todoList));
+
+    if (list.children.length === 0) {
+      footer.style.display = 'none';
+      toggleAll.checked = false;
+    }
   }
 });
 
@@ -250,38 +261,42 @@ footerMenu.addEventListener('click', (event) => {
 });
 
 // ! УДАЛЕНИЕ ВЫПОЛНЕННЫХ ДЕЛ
-clearCompletedBtn.addEventListener('click', (event) => {
+clearCompletedBtn.addEventListener('click', () => {
   if (addNewNote.value === '') {
-    const completedNotes = document.querySelectorAll('input:checked');
+    const completedNotes = document.querySelectorAll('input.toggle:checked');
     for (let i = 0; i < completedNotes.length; i++) {
       const noteId = completedNotes[i].parentNode.parentNode.id;
       todoList = todoList.filter((item) => item.id !== noteId);
       myStorage.setItem('todo', JSON.stringify(todoList));
       completedNotes[i].parentNode.parentNode.remove();
     }
+    if (list.children.length === 0) {
+      footer.style.display = 'none';
+      toggleAll.checked = false;
+    }
   }
 });
 
 // ! ПОДГРУЗКА ВСЕХ ЗАМЕТОК
-window.addEventListener('load', (event) => {
+window.addEventListener('load', () => {
   showMyNotes();
 });
 
 // ! ПОЯВЛЕНИЕ РАМКИ НА АКТИВНОЙ КНОПКЕ ПРИ ПЕРЕКЛЮЧЕНИИ
 completedNotesList.addEventListener('click', () => {
-  completedNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+  completedNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
   allNotesList.style.border = 'none';
   activeNotesList.style.border = 'none';
 });
 
 activeNotesList.addEventListener('click', () => {
-  activeNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+  activeNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
   completedNotesList.style.border = 'none';
   allNotesList.style.border = 'none';
 });
 
 allNotesList.addEventListener('click', () => {
-  allNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+  allNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
   activeNotesList.style.border = 'none';
   completedNotesList.style.border = 'none';
 });
@@ -308,6 +323,7 @@ toggleAll.addEventListener('click', () => {
         }
       }
     }
+    toggleAll.checked = true;
   } else if (completed.legth === 0 && uncompleted.length !== 0) {
     for (let i = 0; i < uncompleted.length; i++) {
       const noteId = uncompleted[i].parentNode.parentNode.id;
@@ -318,6 +334,7 @@ toggleAll.addEventListener('click', () => {
         }
       }
     }
+    toggleAll.checked = true;
   } else if (completed.legth !== 0 && uncompleted.length === 0) {
     for (let i = 0; i < completed.length; i++) {
       const noteId = completed[i].parentNode.parentNode.id;
@@ -328,6 +345,7 @@ toggleAll.addEventListener('click', () => {
         }
       }
     }
+    toggleAll.checked = false;
   }
   showMyNotes();
   renderRightNotes();

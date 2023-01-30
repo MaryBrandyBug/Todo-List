@@ -99,17 +99,19 @@ li:hover .div .deleteBtn {
 }
 
 .footer {
-    padding: 10px 15px;
+    padding: 16px 27px;
     height: 20px;
     display: flex;
     flex-direction: row;
-    width: 90%;
-    margin-left: 10px;
+    justify-content: space-around;
+    background: #fff;
+    border-radius: 9px;
 }
 
 .footer .filters {
     display: flex;
-    min-width: 200px;
+    min-width: 215px;
+    min-height: 20px;
     margin-top: -1px;
     flex-direction: row;
     justify-content: space-between;
@@ -119,6 +121,7 @@ li:hover .div .deleteBtn {
     text-decoration: none;
     width: 89px;
     height: 25px;
+    padding: 3px 7px;
 }
 
 .footer .filters li a:visited {
@@ -129,7 +132,11 @@ li:hover .div .deleteBtn {
     border: none;
     background: none;
     cursor: pointer;
-    margin-left: 60px;
+    margin-left: 27px;
+    font-family: inherit;
+    font-weight: inherit;
+    height: 100%;
+    font-size: 15px;
 }
 
 .toggle-all {
@@ -169,5 +176,40 @@ label {
     color: darkgrey;
 }
 
+@media (max-width: 550px) {
+    .footer span, .footer .clear-completed, .footer .filters {
+        font-size: 12px;
+    }
+
+    .footer span {
+        min-width: 69px;
+    }
+
+    .footer .clear-completed {
+        min-width: 119px;
+        white-space: nowrap;
+        margin-left: 0;
+    }
+
+    .footer {
+        justify-content: center;
+        flex-wrap: wrap;
+        background: none;
+    }
+
+    .footer .filters {
+        justify-content: center;
+        min-width: 119px;
+        margin-top: 0px;
+    }
+
+    .todo-list li .div .deleteBtn {
+        right: 40px;
+    }
+
+    .todo-list li {
+        overflow: scroll;
+    }
+}
 
 

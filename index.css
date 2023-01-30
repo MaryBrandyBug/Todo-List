@@ -176,5 +176,40 @@ label {
     color: darkgrey;
 }
 
+@media (max-width: 550px) {
+    .footer span, .footer .clear-completed, .footer .filters {
+        font-size: 12px;
+    }
+
+    .footer span {
+        min-width: 69px;
+    }
+
+    .footer .clear-completed {
+        min-width: 119px;
+        white-space: nowrap;
+        margin-left: 0;
+    }
+
+    .footer {
+        justify-content: center;
+        flex-wrap: wrap;
+        background: none;
+    }
+
+    .footer .filters {
+        justify-content: center;
+        min-width: 119px;
+        margin-top: 0px;
+    }
+
+    .todo-list li .div .deleteBtn {
+        right: 40px;
+    }
+
+    .todo-list li {
+        overflow: scroll;
+    }
+}
 
 

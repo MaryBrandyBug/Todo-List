@@ -15,6 +15,41 @@ if (myStorage.getItem('todo')) {
   todoList = JSON.parse(myStorage.getItem('todo'));
 }
 
+// ! Ф-ЦИЯ ПОДГРУЖАЕТ ЗАМЕТКИ СООТВЕТСТВУЮЩИЕ АДРЕСУ СТРАНИЦЫ
+function renderRightNotes() {
+  const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
+  const activeNotesLink = window.location.href.split('').slice(window.location.href.length - 6).join('');
+
+  const completedNotes = document.querySelectorAll('input.toggle:checked');
+  const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
+
+  if (completedNotesLink === 'completed') {
+    completedNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+    allNotesList.style.border = 'none';
+    activeNotesList.style.border = 'none';
+    for (let i = 0; i < completedNotes.length; i++) {
+      completedNotes[i].parentNode.parentNode.style.display = '';
+    }
+    for (let j = 0; j < activeNotes.length; j++) {
+      activeNotes[j].parentNode.parentNode.style.display = 'none';
+    }
+  } else if (activeNotesLink === 'active') {
+    activeNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+    completedNotesList.style.border = 'none';
+    allNotesList.style.border = 'none';
+    for (let j = 0; j < activeNotes.length; j++) {
+      activeNotes[j].parentNode.parentNode.style.display = '';
+    }
+    for (let i = 0; i < completedNotes.length; i++) {
+      completedNotes[i].parentNode.parentNode.style.display = 'none';
+    }
+  } else {
+    allNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+    activeNotesList.style.border = 'none';
+    completedNotesList.style.border = 'none';
+  }
+}
+
 // ! Ф-ЦИЯ РАНДОМАЙЗЕР СЛУЧАЙНОГО БОЛЬШОГО ЧИСЛА
 function generateRandomId() {
   const randomIdNumber = Math.round(Math.random() * 100000000000);
@@ -253,41 +288,11 @@ allNotesList.addEventListener('click', () => {
 
 // ! РЕНДЕРИМ ВЕРНУЮ СТРАНИЦУ ПРИ ПЕРЕЗАГРУЗКЕ (ALL/ACTIVE/COMPLETED)
 window.addEventListener('load', () => {
-  const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
-  const activeNotesLink = window.location.href.split('').slice(window.location.href.length - 6).join('');
-
-  const completedNotes = document.querySelectorAll('input:checked');
-  const activeNotes = document.querySelectorAll('input:not(:checked)');
-
-  if (completedNotesLink === 'completed') {
-    completedNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
-    allNotesList.style.border = 'none';
-    activeNotesList.style.border = 'none';
-    for (let i = 0; i < completedNotes.length; i++) {
-      completedNotes[i].parentNode.parentNode.style.display = '';
-    }
-    for (let j = 1; j < activeNotes.length; j++) {
-      activeNotes[j].parentNode.parentNode.style.display = 'none';
-    }
-  } else if (activeNotesLink === 'active') {
-    activeNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
-    completedNotesList.style.border = 'none';
-    allNotesList.style.border = 'none';
-    for (let j = 1; j < activeNotes.length; j++) {
-      activeNotes[j].parentNode.parentNode.style.display = '';
-    }
-    for (let i = 0; i < completedNotes.length; i++) {
-      completedNotes[i].parentNode.parentNode.style.display = 'none';
-    }
-  } else {
-    allNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
-    activeNotesList.style.border = 'none';
-    completedNotesList.style.border = 'none';
-  }
+  renderRightNotes();
 });
 
 // ! ОТМЕТИТЬ ВСЕ ЗАМЕТКИ
-toggleAll.addEventListener('click', (event) => {
+toggleAll.addEventListener('click', () => {
   const completed = document.querySelectorAll('input.toggle:checked');
   const uncompleted = document.querySelectorAll('input.toggle:not(:checked)');
 
@@ -324,4 +329,6 @@ toggleAll.addEventListener('click', (event) => {
       }
     }
   }
+  showMyNotes();
+  renderRightNotes();
 });

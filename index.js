@@ -269,19 +269,19 @@ window.addEventListener('load', (event) => {
 
 // ! ПОЯВЛЕНИЕ РАМКИ НА АКТИВНОЙ КНОПКЕ ПРИ ПЕРЕКЛЮЧЕНИИ
 completedNotesList.addEventListener('click', () => {
-  completedNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+  completedNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
   allNotesList.style.border = 'none';
   activeNotesList.style.border = 'none';
 });
 
 activeNotesList.addEventListener('click', () => {
-  activeNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+  activeNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
   completedNotesList.style.border = 'none';
   allNotesList.style.border = 'none';
 });
 
 allNotesList.addEventListener('click', () => {
-  allNotesList.style.borderBottom = '2px solid rgba(175, 47, 47, 0.2)';
+  allNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
   activeNotesList.style.border = 'none';
   completedNotesList.style.border = 'none';
 });

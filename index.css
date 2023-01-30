@@ -119,9 +119,12 @@ li:hover .div .deleteBtn {
 
 .footer .filters li a {
     text-decoration: none;
+    -moz-text-decoration-style: none;
+    -webkit-text-decoration-style: none;
     width: 89px;
     height: 25px;
     padding: 3px 7px;
+    color: black;
 }
 
 .footer .filters li a:visited {
@@ -137,6 +140,7 @@ li:hover .div .deleteBtn {
     font-weight: inherit;
     height: 100%;
     font-size: 15px;
+    color: black;
 }
 
 .toggle-all {

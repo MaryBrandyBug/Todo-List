@@ -93,6 +93,22 @@ li:hover .div .deleteBtn {
     opacity: 1;
 }
 
+
+
+li .edit {
+    min-width: 100%;
+    min-height: 100%;
+    outline: none;
+    font-family: inherit;
+    font-weight: inherit;
+    font-style: italic;
+    border: none;
+}
+
+li .edit:focus {
+    border: none;
+}
+
 .todo-list .completed {
     text-decoration: line-through;
     color: lightgrey;

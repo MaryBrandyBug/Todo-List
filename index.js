@@ -176,7 +176,7 @@ list.addEventListener('click', (event) => {
 
 // ! ЗАМЕТКА ВЫПОЛНЕНА
 list.addEventListener('change', (event) => {
-  if (event.target.tagName === 'INPUT') {
+  if (event.target.tagName === 'INPUT' && event.target.classList.value === 'toggle') {
     if (event.target.checked === true) {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.setAttribute('class', 'completed');
@@ -349,4 +349,91 @@ toggleAll.addEventListener('click', () => {
   }
   showMyNotes();
   renderRightNotes();
+});
+
+// ! РЕДАКТИРОВАНИЕ ЗАМЕТКИ
+list.addEventListener(('dblclick'), (event) => {
+  if (event.target.tagName !== 'BUTTON' && event.target.tagName !== 'INPUT') {
+    if (event.target.tagName === 'DIV' && !document.querySelector('.edit')) {
+      const currentBlock = event.target;
+      currentBlock.style.display = 'none';
+      const listItem = event.target.parentNode;
+      const noteText = todoList.filter((note) => note.id === listItem.id);
+      const newInputField = document.createElement('input');
+      newInputField.setAttribute('value', `${noteText[0].text}`);
+      newInputField.setAttribute('class', 'edit');
+      listItem.appendChild(newInputField);
+      newInputField.focus();
+    }
+
+    if (event.target.tagName === 'LI' && !document.querySelector('.edit')) {
+      const currentBlock = event.target;
+      currentBlock.children[0].style.display = 'none';
+      const noteText = todoList.filter((note) => note.id === currentBlock.id);
+      const newInputField = document.createElement('input');
+      newInputField.setAttribute('value', `${noteText[0].text}`);
+      newInputField.setAttribute('class', 'edit');
+      currentBlock.appendChild(newInputField);
+      newInputField.focus();
+    }
+
+    if (event.target.tagName === 'LABEL' && !document.querySelector('.edit')) {
+      const currentBlock = event.target;
+      currentBlock.parentNode.style.display = 'none';
+      const listItem = event.target.parentNode.parentNode;
+      const noteText = todoList.filter((note) => note.id === listItem.id);
+      const newInputField = document.createElement('input');
+      newInputField.setAttribute('value', `${noteText[0].text}`);
+      newInputField.setAttribute('class', 'edit');
+      listItem.appendChild(newInputField);
+      newInputField.focus();
+    }
+  }
+});
+
+// toDo ФУНКЦИЯ ДЛЯ ДОБАВЛЕНИЯ
+function editNotes(editNote) {
+  if (editNote.value) {
+    const newNoteText = editNote.value.split(' ');
+    const verification = newNoteText.filter((el) => el !== ' ' && el !== '');
+
+    if (verification.length !== 0) {
+      const listItem = editNote.parentNode;
+      for (let i = 0; i < todoList.length; i++) {
+        if (todoList[i].id === listItem.id) {
+          todoList[i].text = editNote.value;
+          myStorage.setItem('todo', JSON.stringify(todoList));
+          listItem.children[0].style.display = '';
+        }
+      }
+    }
+    showMyNotes();
+    renderRightNotes();
+    document.querySelector('.container').style.display = '';
+    list.style.display = '';
+  } else if (editNote.value.length === 0) {
+    const listItem = editNote.parentNode;
+    const notes = todoList.filter((item) => item.id !== listItem.id);
+    listItem.remove();
+    todoList = notes;
+    myStorage.setItem('todo', JSON.stringify(todoList));
+  }
+}
+
+document.addEventListener('click', (event) => {
+  const editNote = document.querySelector('.edit');
+  if (editNote) {
+    if (event.target.classList.value !== 'edit' && event.target !== editNote.parentNode) {
+      editNotes(editNote);
+    }
+  }
+});
+
+document.addEventListener('keydown', (event) => {
+  const editNote = document.querySelector('.edit');
+  if (event.code === 'Enter') {
+    if (editNote) {
+      editNotes(editNote);
+    }
+  }
 });

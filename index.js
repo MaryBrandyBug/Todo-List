@@ -362,17 +362,30 @@ list.addEventListener(('dblclick'), (event) => {
       const newInputField = document.createElement('input');
       newInputField.setAttribute('value', `${noteText[0].text}`);
       newInputField.setAttribute('class', 'edit');
+      newInputField.setAttribute('spellcheck', 'false');
+      newInputField.style = `
+      border-bottom: 1.5px solid transparent;
+      background: linear-gradient(90deg, rgb(202, 153, 153), rgb(225, 215, 216), rgb(210, 187, 196));
+      box-shadow: inset 0px 0px 0px 100vw #fff; /*Тень направленная внутрь контейнера, перекрывает ненужный фон и оставляет только рамку*/
+      `;
       listItem.appendChild(newInputField);
       newInputField.focus();
     }
 
     if (event.target.tagName === 'LI' && !document.querySelector('.edit')) {
       const currentBlock = event.target;
+      currentBlock.classList.add('for-focus');
       currentBlock.children[0].style.display = 'none';
       const noteText = todoList.filter((note) => note.id === currentBlock.id);
       const newInputField = document.createElement('input');
       newInputField.setAttribute('value', `${noteText[0].text}`);
       newInputField.setAttribute('class', 'edit');
+      newInputField.setAttribute('spellcheck', 'false');
+      newInputField.style = `
+      border-bottom: 1.5px solid transparent;
+      background: linear-gradient(90deg, rgb(202, 153, 153), rgb(225, 215, 216), rgb(210, 187, 196));    
+      box-shadow: inset 0px 0px 0px 100vw #fff; /*Тень направленная внутрь контейнера, перекрывает ненужный фон и оставляет только рамку*/
+      `;
       currentBlock.appendChild(newInputField);
       newInputField.focus();
     }
@@ -381,10 +394,17 @@ list.addEventListener(('dblclick'), (event) => {
       const currentBlock = event.target;
       currentBlock.parentNode.style.display = 'none';
       const listItem = event.target.parentNode.parentNode;
+      currentBlock.classList.add('for-focus');
       const noteText = todoList.filter((note) => note.id === listItem.id);
       const newInputField = document.createElement('input');
+      newInputField.style = `
+      border-bottom: 1.5px solid transparent;
+      background: linear-gradient(90deg, rgb(202, 153, 153), rgb(225, 215, 216), rgb(210, 187, 196)); 
+      box-shadow: inset 0px 0px 0px 100vw #fff; /*Тень направленная внутрь контейнера, перекрывает ненужный фон и оставляет только рамку*/
+      `;
       newInputField.setAttribute('value', `${noteText[0].text}`);
       newInputField.setAttribute('class', 'edit');
+      newInputField.setAttribute('spellcheck', 'false');
       listItem.appendChild(newInputField);
       newInputField.focus();
     }
@@ -444,7 +464,6 @@ list.addEventListener('click', (event) => {
     if (event.target.classList.value === 'toggle') {
       const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
       if (event.target.checked === false && completedNotesLink === 'completed') {
-        console.log(event.target.checked);
         const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
         note.classList.remove('completed');
         for (let i = 0; i < todoList.length; i++) {

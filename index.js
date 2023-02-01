@@ -51,15 +51,12 @@ function generateRandomId() {
 
 // ! Ф-ЦИЯ ПРОВЕРКИ НА ДЛИНУ ЗАМЕТКИ (НА ПУСТУЮ ЗАМЕТКУ)
 function checkLength() {
-  if (addNewNote.value) {
-    const newNoteText = addNewNote.value.split(' ');
-    const verification = newNoteText.filter((el) => el !== ' ' && el !== '');
-    if (verification.length !== 0) {
-      return true;
-    }
-    addNewNote.value = '';
-    return false;
+  const verification = addNewNote.trim();
+  if (verification.length !== 0) {
+    return true;
   }
+  addNewNote.value = '';
+  return false;
 }
 
 // ! Ф-ЦИЯ ДОБАВЛЕНИЯ ЗАМЕТКИ

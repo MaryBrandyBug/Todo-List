@@ -20,35 +20,18 @@ function renderRightNotes() {
   const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
 
   if (completedNotesLink === 'completed') {
-    // completedNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
-    // allNotesList.style.border = 'none';
-    // activeNotesList.style.border = 'none';
     completedNotesList.classList.add('current-link');
     allNotesList.classList.remove('current-link');
     activeNotesList.classList.remove('current-link');
-    for (let i = 0; i < completedNotes.length; i++) {
-      completedNotes[i].parentNode.parentNode.style.display = '';
-    }
-    for (let j = 0; j < activeNotes.length; j++) {
-      activeNotes[j].parentNode.parentNode.style.display = 'none';
-    }
+    completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
+    activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
   } else if (activeNotesLink === 'active') {
-    // activeNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
-    // completedNotesList.style.border = 'none';
-    // allNotesList.style.border = 'none';
     activeNotesList.classList.add('current-link');
     completedNotesList.classList.remove('current-link');
     allNotesList.classList.remove('current-link');
-    for (let j = 0; j < activeNotes.length; j++) {
-      activeNotes[j].parentNode.parentNode.style.display = '';
-    }
-    for (let i = 0; i < completedNotes.length; i++) {
-      completedNotes[i].parentNode.parentNode.style.display = 'none';
-    }
+    activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
+    completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
   } else {
-    // allNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
-    // activeNotesList.style.border = 'none';
-    // completedNotesList.style.border = 'none';
     allNotesList.classList.add('current-link');
     completedNotesList.classList.remove('current-link');
     activeNotesList.classList.remove('current-link');
@@ -201,6 +184,7 @@ list.addEventListener('change', (event) => {
         }
       }
     }
+    renderRightNotes();
   }
 });
 
@@ -235,26 +219,14 @@ footerMenu.addEventListener('click', (event) => {
     const completedNotes = document.querySelectorAll('input.toggle:checked');
     const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
     if (event.target.innerHTML === 'Active') {
-      for (let j = 0; j < activeNotes.length; j++) {
-        activeNotes[j].parentNode.parentNode.style.display = '';
-      }
-      for (let i = 0; i < completedNotes.length; i++) {
-        completedNotes[i].parentNode.parentNode.style.display = 'none';
-      }
+      activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
+      completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
     } else if (event.target.innerHTML === 'Completed') {
-      for (let i = 0; i < completedNotes.length; i++) {
-        completedNotes[i].parentNode.parentNode.style.display = '';
-      }
-      for (let j = 0; j < activeNotes.length; j++) {
-        activeNotes[j].parentNode.parentNode.style.display = 'none';
-      }
+      completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
+      activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
     } else if (event.target.innerHTML === 'All') {
-      for (let i = 0; i < completedNotes.length; i++) {
-        completedNotes[i].parentNode.parentNode.style.display = '';
-      }
-      for (let j = 0; j < activeNotes.length; j++) {
-        activeNotes[j].parentNode.parentNode.style.display = '';
-      }
+      completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
+      activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
     }
   }
   const completed = document.querySelectorAll('input.toggle:checked');
@@ -289,27 +261,18 @@ window.addEventListener('load', () => {
 
 // ! ПОЯВЛЕНИЕ РАМКИ НА АКТИВНОЙ КНОПКЕ ПРИ ПЕРЕКЛЮЧЕНИИ
 completedNotesList.addEventListener('click', () => {
-  // completedNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
-  // allNotesList.style.border = 'none';
-  // activeNotesList.style.border = 'none';
   completedNotesList.classList.add('current-link');
   allNotesList.classList.remove('current-link');
   activeNotesList.classList.remove('current-link');
 });
 
 activeNotesList.addEventListener('click', () => {
-  // activeNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
-  // completedNotesList.style.border = 'none';
-  // allNotesList.style.border = 'none';
   activeNotesList.classList.add('current-link');
   completedNotesList.classList.remove('current-link');
   allNotesList.classList.remove('current-link');
 });
 
 allNotesList.addEventListener('click', () => {
-  // allNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
-  // activeNotesList.style.border = 'none';
-  // completedNotesList.style.border = 'none';
   allNotesList.classList.add('current-link');
   completedNotesList.classList.remove('current-link');
   activeNotesList.classList.remove('current-link');
@@ -440,7 +403,6 @@ function editNotes(editNote) {
         if (todoList[i].id === listItem.id) {
           todoList[i].text = editNote.value;
           localStorage.setItem('todo', JSON.stringify(todoList));
-          // listItem.children[0].style.display = '';
         }
       }
     }

@@ -168,21 +168,25 @@ list.addEventListener('change', (event) => {
     if (event.target.checked === true) {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.setAttribute('class', 'completed');
-      for (let i = 0; i < todoList.length; i++) {
-        if (todoList[i].id === event.target.parentNode.parentNode.id) {
-          todoList[i].checked = true;
-          localStorage.setItem('todo', JSON.stringify(todoList));
-        }
-      }
+      todoList.find((item) => (item.id === event.target.parentNode.parentNode.id ? item.checked = true : false));
+      // for (let i = 0; i < todoList.length; i++) {
+      //   if (todoList[i].id === event.target.parentNode.parentNode.id) {
+      //     todoList[i].checked = true;
+      //     localStorage.setItem('todo', JSON.stringify(todoList));
+      //   }
+      // }
+      localStorage.setItem('todo', JSON.stringify(todoList));
     } else {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.classList.remove('completed');
-      for (let i = 0; i < todoList.length; i++) {
-        if (todoList[i].id === note.id) {
-          todoList[i].checked = false;
-          localStorage.setItem('todo', JSON.stringify(todoList));
-        }
-      }
+      todoList.find((item) => (item.id === note.id ? item.checked = false : false));
+      // for (let i = 0; i < todoList.length; i++) {
+      //   if (todoList[i].id === note.id) {
+      //     todoList[i].checked = false;
+      //     localStorage.setItem('todo', JSON.stringify(todoList));
+      //   }
+      // }
+      localStorage.setItem('todo', JSON.stringify(todoList));
     }
     renderRightNotes();
   }
@@ -289,39 +293,33 @@ toggleAll.addEventListener('click', () => {
   const uncompleted = document.querySelectorAll('input.toggle:not(:checked)');
 
   if (completed && uncompleted.length !== 0) {
-    for (let i = 0; i < uncompleted.length; i++) {
-      const noteId = uncompleted[i].parentNode.parentNode.id;
-      uncompleted[i].setAttribute('checked', 'checked');
+    uncompleted.forEach((item) => {
+      const noteId = item.parentNode.parentNode.id;
+      item.setAttribute('checked', 'checked');
       document.getElementById(noteId).setAttribute('class', 'completed');
-      for (let j = 0; j < todoList.length; j++) {
-        if (todoList[j].id === noteId) {
-          todoList[j].checked = true;
-          localStorage.setItem('todo', JSON.stringify(todoList));
-        }
-      }
-    }
+      todoList.find((note) => {
+        note.id === noteId ? note.checked = true : false;
+      });
+      localStorage.setItem('todo', JSON.stringify(todoList));
+    });
     toggleAll.checked = true;
-  } else if (completed.legth === 0 && uncompleted.length !== 0) {
-    for (let i = 0; i < uncompleted.length; i++) {
-      const noteId = uncompleted[i].parentNode.parentNode.id;
-      for (let j = 0; j < todoList.length; j++) {
-        if (todoList[j].id === noteId) {
-          todoList[j].checked = true;
-          localStorage.setItem('todo', JSON.stringify(todoList));
-        }
-      }
-    }
+  } else if (completed.length === 0 && uncompleted.length !== 0) {
+    uncompleted.forEach((item) => {
+      const noteId = item.parentNode.parentNode.id;
+      todoList.find((note) => {
+        note.id === noteId ? note.checked = true : false;
+      });
+      localStorage.setItem('todo', JSON.stringify(todoList));
+    });
     toggleAll.checked = true;
-  } else if (completed.legth !== 0 && uncompleted.length === 0) {
-    for (let i = 0; i < completed.length; i++) {
-      const noteId = completed[i].parentNode.parentNode.id;
-      for (let j = 0; j < todoList.length; j++) {
-        if (todoList[j].id === noteId) {
-          todoList[j].checked = false;
-          localStorage.setItem('todo', JSON.stringify(todoList));
-        }
-      }
-    }
+  } else if (completed.length !== 0 && uncompleted.length === 0) {
+    completed.forEach((item) => {
+      const noteId = item.parentNode.parentNode.id;
+      todoList.find((note) => {
+        note.id === noteId ? note.checked = false : false;
+      });
+      localStorage.setItem('todo', JSON.stringify(todoList));
+    });
     toggleAll.checked = false;
   }
   showMyNotes();
@@ -399,17 +397,11 @@ function editNotes(editNote) {
 
     if (verification.length !== 0) {
       const listItem = editNote.parentNode;
-      for (let i = 0; i < todoList.length; i++) {
-        if (todoList[i].id === listItem.id) {
-          todoList[i].text = editNote.value;
-          localStorage.setItem('todo', JSON.stringify(todoList));
-        }
-      }
+      todoList.find((note) => { note.id === listItem.id ? note.text = editNote.value : false; });
+      localStorage.setItem('todo', JSON.stringify(todoList));
     }
     showMyNotes();
     renderRightNotes();
-    document.querySelector('.container').style.display = '';
-    list.style.display = '';
   } else if (editNote.value.length === 0) {
     const listItem = editNote.parentNode;
     const notes = todoList.filter((item) => item.id !== listItem.id);
@@ -445,31 +437,19 @@ list.addEventListener('click', (event) => {
       if (event.target.checked === false && completedNotesLink === 'completed') {
         const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
         note.classList.remove('completed');
-        for (let i = 0; i < todoList.length; i++) {
-          if (todoList[i].id === note.id) {
-            todoList[i].checked = false;
-            localStorage.setItem('todo', JSON.stringify(todoList));
-          }
-        }
+        todoList.find((item) => { item.id === note.id ? item.checked = false : false; });
+        localStorage.setItem('todo', JSON.stringify(todoList));
       }
       if (event.target.checked === true) {
         const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
         note.setAttribute('class', 'completed');
-        for (let i = 0; i < todoList.length; i++) {
-          if (todoList[i].id === event.target.parentNode.parentNode.id) {
-            todoList[i].checked = true;
-            localStorage.setItem('todo', JSON.stringify(todoList));
-          }
-        }
+        todoList.find((item) => { item.id === note.id ? item.checked = true : false; });
+        localStorage.setItem('todo', JSON.stringify(todoList));
       } else if (event.target.checked === false) {
         const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
         note.classList.remove('completed');
-        for (let i = 0; i < todoList.length; i++) {
-          if (todoList[i].id === note.id) {
-            todoList[i].checked = false;
-            localStorage.setItem('todo', JSON.stringify(todoList));
-          }
-        }
+        todoList.find((item) => { item.id === note.id ? item.checked = false : false; });
+        localStorage.setItem('todo', JSON.stringify(todoList));
       }
     }
   }

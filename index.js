@@ -359,8 +359,9 @@ list.addEventListener(('dblclick'), (event) => {
       currentBlock.style.display = 'none';
       const listItem = event.target.parentNode;
       const noteText = todoList.filter((note) => note.id === listItem.id);
+      const noteTextTrim = noteText[0].text.replace(/ +/g, ' ').trim();
       const newInputField = document.createElement('input');
-      newInputField.setAttribute('value', `${noteText[0].text}`);
+      newInputField.setAttribute('value', `${noteTextTrim}`);
       newInputField.setAttribute('class', 'edit');
       newInputField.setAttribute('spellcheck', 'false');
       newInputField.style = `
@@ -377,8 +378,9 @@ list.addEventListener(('dblclick'), (event) => {
       currentBlock.classList.add('for-focus');
       currentBlock.children[0].style.display = 'none';
       const noteText = todoList.filter((note) => note.id === currentBlock.id);
+      const noteTextTrim = noteText[0].text.replace(/ +/g, ' ').trim();
       const newInputField = document.createElement('input');
-      newInputField.setAttribute('value', `${noteText[0].text}`);
+      newInputField.setAttribute('value', `${noteTextTrim}`);
       newInputField.setAttribute('class', 'edit');
       newInputField.setAttribute('spellcheck', 'false');
       newInputField.style = `
@@ -396,13 +398,14 @@ list.addEventListener(('dblclick'), (event) => {
       const listItem = event.target.parentNode.parentNode;
       currentBlock.classList.add('for-focus');
       const noteText = todoList.filter((note) => note.id === listItem.id);
+      const noteTextTrim = noteText[0].text.replace(/ +/g, ' ').trim();
       const newInputField = document.createElement('input');
       newInputField.style = `
       border-bottom: 1.5px solid transparent;
       background: linear-gradient(90deg, rgb(202, 153, 153), rgb(225, 215, 216), rgb(210, 187, 196)); 
       box-shadow: inset 0px 0px 0px 100vw #fff; /*Тень направленная внутрь контейнера, перекрывает ненужный фон и оставляет только рамку*/
       `;
-      newInputField.setAttribute('value', `${noteText[0].text}`);
+      newInputField.setAttribute('value', `${noteTextTrim}`);
       newInputField.setAttribute('class', 'edit');
       newInputField.setAttribute('spellcheck', 'false');
       listItem.appendChild(newInputField);

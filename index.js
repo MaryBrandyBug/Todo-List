@@ -200,29 +200,29 @@ list.addEventListener('change', (event) => {
 });
 
 // ! ИЗМЕНЕНИЕ СПИСКА ЗАМЕТОК
-list.addEventListener('change', () => {
-  const allCompletedNotes = document.querySelectorAll('.completed');
-  const needsToDo = footer.firstElementChild.firstElementChild;
-  needsToDo.innerHTML = `${list.children.length - allCompletedNotes.length}`;
+// list.addEventListener('change', () => {
+//   const allCompletedNotes = document.querySelectorAll('.completed');
+//   const needsToDo = footer.firstElementChild.firstElementChild;
+//   needsToDo.innerHTML = `${list.children.length - allCompletedNotes.length}`;
 
-  const activeNotesLink = window.location.href.split('').slice(window.location.href.length - 6).join('');
-  const completedNotes = document.querySelectorAll('input:checked');
+//   const activeNotesLink = window.location.href.split('').slice(window.location.href.length - 6).join('');
+//   const completedNotes = document.querySelectorAll('input:checked');
 
-  const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
-  const activeNotes = document.querySelectorAll('input:not(:checked)');
+//   const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
+//   const activeNotes = document.querySelectorAll('input:not(:checked)');
 
-  if (activeNotesLink === 'active') {
-    for (let i = 0; i < completedNotes.length; i++) {
-      completedNotes[i].parentNode.parentNode.style.display = 'none';
-    }
-  }
+//   if (activeNotesLink === 'active') {
+//     for (let i = 0; i < completedNotes.length; i++) {
+//       completedNotes[i].parentNode.parentNode.style.display = 'none';
+//     }
+//   }
 
-  if (completedNotesLink === 'completed') {
-    for (let j = 1; j < activeNotes.length; j++) {
-      activeNotes[j].parentNode.parentNode.style.display = 'none';
-    }
-  }
-});
+//   if (completedNotesLink === 'completed') {
+//     for (let j = 1; j < activeNotes.length; j++) {
+//       // activeNotes[j].parentNode.parentNode.style.display = 'none';
+//     }
+//   }
+// });
 
 // ! АКТИВНЫЕ ЗАМЕТКИ
 footerMenu.addEventListener('click', (event) => {
@@ -403,7 +403,7 @@ function editNotes(editNote) {
         if (todoList[i].id === listItem.id) {
           todoList[i].text = editNote.value;
           myStorage.setItem('todo', JSON.stringify(todoList));
-          listItem.children[0].style.display = '';
+          // listItem.children[0].style.display = '';
         }
       }
     }
@@ -434,6 +434,45 @@ document.addEventListener('keydown', (event) => {
   if (event.code === 'Enter') {
     if (editNote) {
       editNotes(editNote);
+    }
+  }
+});
+
+// ! ПРИ ЗАПОЛНЕННОМ ИНПУТЕ РЕДАКТИРОВАНИЯ НАЖИМАЕТСЯ ЧЕКБОКС ОТ ЗАМЕТКИ
+list.addEventListener('click', (event) => {
+  if (document.querySelector('.edit')) {
+    if (event.target.classList.value === 'toggle') {
+      const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
+      if (event.target.checked === false && completedNotesLink === 'completed') {
+        console.log(event.target.checked);
+        const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
+        note.classList.remove('completed');
+        for (let i = 0; i < todoList.length; i++) {
+          if (todoList[i].id === note.id) {
+            todoList[i].checked = false;
+            myStorage.setItem('todo', JSON.stringify(todoList));
+          }
+        }
+      }
+      if (event.target.checked === true) {
+        const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
+        note.setAttribute('class', 'completed');
+        for (let i = 0; i < todoList.length; i++) {
+          if (todoList[i].id === event.target.parentNode.parentNode.id) {
+            todoList[i].checked = true;
+            myStorage.setItem('todo', JSON.stringify(todoList));
+          }
+        }
+      } else if (event.target.checked === false) {
+        const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
+        note.classList.remove('completed');
+        for (let i = 0; i < todoList.length; i++) {
+          if (todoList[i].id === note.id) {
+            todoList[i].checked = false;
+            myStorage.setItem('todo', JSON.stringify(todoList));
+          }
+        }
+      }
     }
   }
 });

@@ -51,12 +51,14 @@ function generateRandomId() {
 
 // ! Ф-ЦИЯ ПРОВЕРКИ НА ДЛИНУ ЗАМЕТКИ (НА ПУСТУЮ ЗАМЕТКУ)
 function checkLength() {
-  const verification = addNewNote.trim();
-  if (verification.length !== 0) {
-    return true;
+  if (addNewNote.value) {
+    const verification = addNewNote.trim();
+    if (verification.length !== 0) {
+      return true;
+    }
+    addNewNote.value = '';
+    return false;
   }
-  addNewNote.value = '';
-  return false;
 }
 
 // ! Ф-ЦИЯ ДОБАВЛЕНИЯ ЗАМЕТКИ

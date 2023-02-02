@@ -1,5 +1,3 @@
-const myStorage = window.localStorage;
-
 const addNewNote = document.querySelector('.new-note');
 const list = document.querySelector('.todo-list');
 const footer = document.querySelector('.footer');
@@ -10,10 +8,8 @@ const activeNotesList = document.querySelector('.active-notes');
 const allNotesList = document.querySelector('.all-notes');
 const toggleAll = document.querySelector('.toggle-all');
 
-let todoList = [];
-if (myStorage.getItem('todo')) {
-  todoList = JSON.parse(myStorage.getItem('todo'));
-}
+const myStorage = JSON.parse(localStorage.getItem('todo'));
+let todoList = myStorage ?? [];
 
 // ! Ф-ЦИЯ ПОДГРУЖАЕТ ЗАМЕТКИ СООТВЕТСТВУЮЩИЕ АДРЕСУ СТРАНИЦЫ
 function renderRightNotes() {
@@ -24,29 +20,21 @@ function renderRightNotes() {
   const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
 
   if (completedNotesLink === 'completed') {
-    completedNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
-    allNotesList.style.border = 'none';
-    activeNotesList.style.border = 'none';
-    for (let i = 0; i < completedNotes.length; i++) {
-      completedNotes[i].parentNode.parentNode.style.display = '';
-    }
-    for (let j = 0; j < activeNotes.length; j++) {
-      activeNotes[j].parentNode.parentNode.style.display = 'none';
-    }
+    completedNotesList.classList.add('current-link');
+    allNotesList.classList.remove('current-link');
+    activeNotesList.classList.remove('current-link');
+    completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
+    activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
   } else if (activeNotesLink === 'active') {
-    activeNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
-    completedNotesList.style.border = 'none';
-    allNotesList.style.border = 'none';
-    for (let j = 0; j < activeNotes.length; j++) {
-      activeNotes[j].parentNode.parentNode.style.display = '';
-    }
-    for (let i = 0; i < completedNotes.length; i++) {
-      completedNotes[i].parentNode.parentNode.style.display = 'none';
-    }
+    activeNotesList.classList.add('current-link');
+    completedNotesList.classList.remove('current-link');
+    allNotesList.classList.remove('current-link');
+    activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
+    completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
   } else {
-    allNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
-    activeNotesList.style.border = 'none';
-    completedNotesList.style.border = 'none';
+    allNotesList.classList.add('current-link');
+    completedNotesList.classList.remove('current-link');
+    activeNotesList.classList.remove('current-link');
   }
 
   if (list.children.length === 0) {
@@ -64,8 +52,7 @@ function generateRandomId() {
 // ! Ф-ЦИЯ ПРОВЕРКИ НА ДЛИНУ ЗАМЕТКИ (НА ПУСТУЮ ЗАМЕТКУ)
 function checkLength() {
   if (addNewNote.value) {
-    const newNoteText = addNewNote.value.split(' ');
-    const verification = newNoteText.filter((el) => el !== ' ' && el !== '');
+    const verification = addNewNote.trim();
     if (verification.length !== 0) {
       return true;
     }
@@ -87,7 +74,7 @@ function addNote() {
 
   const newNote = { text: addNewNote.value, checked: false, id: newListElement.id };
   todoList.push(newNote);
-  myStorage.setItem('todo', JSON.stringify(todoList));
+  localStorage.setItem('todo', JSON.stringify(todoList));
 
   const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
   if (completedNotesLink === 'completed') {
@@ -165,7 +152,7 @@ list.addEventListener('click', (event) => {
     const allCompletedNotes = document.querySelectorAll('.completed');
     needsToDo.innerHTML = list.children.length - allCompletedNotes.length;
     todoList = todoList.filter((item) => item.id !== event.target.parentNode.parentNode.id);
-    myStorage.setItem('todo', JSON.stringify(todoList));
+    localStorage.setItem('todo', JSON.stringify(todoList));
 
     if (list.children.length === 0) {
       footer.style.display = 'none';
@@ -180,22 +167,27 @@ list.addEventListener('change', (event) => {
     if (event.target.checked === true) {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.setAttribute('class', 'completed');
-      for (let i = 0; i < todoList.length; i++) {
-        if (todoList[i].id === event.target.parentNode.parentNode.id) {
-          todoList[i].checked = true;
-          myStorage.setItem('todo', JSON.stringify(todoList));
-        }
-      }
+      todoList.find((item) => (item.id === event.target.parentNode.parentNode.id ? item.checked = true : false));
+      // for (let i = 0; i < todoList.length; i++) {
+      //   if (todoList[i].id === event.target.parentNode.parentNode.id) {
+      //     todoList[i].checked = true;
+      //     localStorage.setItem('todo', JSON.stringify(todoList));
+      //   }
+      // }
+      localStorage.setItem('todo', JSON.stringify(todoList));
     } else {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.classList.remove('completed');
-      for (let i = 0; i < todoList.length; i++) {
-        if (todoList[i].id === note.id) {
-          todoList[i].checked = false;
-          myStorage.setItem('todo', JSON.stringify(todoList));
-        }
-      }
+      todoList.find((item) => (item.id === note.id ? item.checked = false : false));
+      // for (let i = 0; i < todoList.length; i++) {
+      //   if (todoList[i].id === note.id) {
+      //     todoList[i].checked = false;
+      //     localStorage.setItem('todo', JSON.stringify(todoList));
+      //   }
+      // }
+      localStorage.setItem('todo', JSON.stringify(todoList));
     }
+    renderRightNotes();
   }
 });
 
@@ -230,26 +222,14 @@ footerMenu.addEventListener('click', (event) => {
     const completedNotes = document.querySelectorAll('input.toggle:checked');
     const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
     if (event.target.innerHTML === 'Active') {
-      for (let j = 0; j < activeNotes.length; j++) {
-        activeNotes[j].parentNode.parentNode.style.display = '';
-      }
-      for (let i = 0; i < completedNotes.length; i++) {
-        completedNotes[i].parentNode.parentNode.style.display = 'none';
-      }
+      activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
+      completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
     } else if (event.target.innerHTML === 'Completed') {
-      for (let i = 0; i < completedNotes.length; i++) {
-        completedNotes[i].parentNode.parentNode.style.display = '';
-      }
-      for (let j = 0; j < activeNotes.length; j++) {
-        activeNotes[j].parentNode.parentNode.style.display = 'none';
-      }
+      completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
+      activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
     } else if (event.target.innerHTML === 'All') {
-      for (let i = 0; i < completedNotes.length; i++) {
-        completedNotes[i].parentNode.parentNode.style.display = '';
-      }
-      for (let j = 0; j < activeNotes.length; j++) {
-        activeNotes[j].parentNode.parentNode.style.display = '';
-      }
+      completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
+      activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
     }
   }
   const completed = document.querySelectorAll('input.toggle:checked');
@@ -267,7 +247,7 @@ clearCompletedBtn.addEventListener('click', () => {
     for (let i = 0; i < completedNotes.length; i++) {
       const noteId = completedNotes[i].parentNode.parentNode.id;
       todoList = todoList.filter((item) => item.id !== noteId);
-      myStorage.setItem('todo', JSON.stringify(todoList));
+      localStorage.setItem('todo', JSON.stringify(todoList));
       completedNotes[i].parentNode.parentNode.remove();
     }
     if (list.children.length === 0) {
@@ -284,21 +264,21 @@ window.addEventListener('load', () => {
 
 // ! ПОЯВЛЕНИЕ РАМКИ НА АКТИВНОЙ КНОПКЕ ПРИ ПЕРЕКЛЮЧЕНИИ
 completedNotesList.addEventListener('click', () => {
-  completedNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
-  allNotesList.style.border = 'none';
-  activeNotesList.style.border = 'none';
+  completedNotesList.classList.add('current-link');
+  allNotesList.classList.remove('current-link');
+  activeNotesList.classList.remove('current-link');
 });
 
 activeNotesList.addEventListener('click', () => {
-  activeNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
-  completedNotesList.style.border = 'none';
-  allNotesList.style.border = 'none';
+  activeNotesList.classList.add('current-link');
+  completedNotesList.classList.remove('current-link');
+  allNotesList.classList.remove('current-link');
 });
 
 allNotesList.addEventListener('click', () => {
-  allNotesList.style.border = '2px solid rgba(175, 47, 47, 0.2)';
-  activeNotesList.style.border = 'none';
-  completedNotesList.style.border = 'none';
+  allNotesList.classList.add('current-link');
+  completedNotesList.classList.remove('current-link');
+  activeNotesList.classList.remove('current-link');
 });
 
 // ! РЕНДЕРИМ ВЕРНУЮ СТРАНИЦУ ПРИ ПЕРЕЗАГРУЗКЕ (ALL/ACTIVE/COMPLETED)
@@ -312,39 +292,33 @@ toggleAll.addEventListener('click', () => {
   const uncompleted = document.querySelectorAll('input.toggle:not(:checked)');
 
   if (completed && uncompleted.length !== 0) {
-    for (let i = 0; i < uncompleted.length; i++) {
-      const noteId = uncompleted[i].parentNode.parentNode.id;
-      uncompleted[i].setAttribute('checked', 'checked');
+    uncompleted.forEach((item) => {
+      const noteId = item.parentNode.parentNode.id;
+      item.setAttribute('checked', 'checked');
       document.getElementById(noteId).setAttribute('class', 'completed');
-      for (let j = 0; j < todoList.length; j++) {
-        if (todoList[j].id === noteId) {
-          todoList[j].checked = true;
-          myStorage.setItem('todo', JSON.stringify(todoList));
-        }
-      }
-    }
+      todoList.find((note) => {
+        note.id === noteId ? note.checked = true : false;
+      });
+      localStorage.setItem('todo', JSON.stringify(todoList));
+    });
     toggleAll.checked = true;
-  } else if (completed.legth === 0 && uncompleted.length !== 0) {
-    for (let i = 0; i < uncompleted.length; i++) {
-      const noteId = uncompleted[i].parentNode.parentNode.id;
-      for (let j = 0; j < todoList.length; j++) {
-        if (todoList[j].id === noteId) {
-          todoList[j].checked = true;
-          myStorage.setItem('todo', JSON.stringify(todoList));
-        }
-      }
-    }
+  } else if (completed.length === 0 && uncompleted.length !== 0) {
+    uncompleted.forEach((item) => {
+      const noteId = item.parentNode.parentNode.id;
+      todoList.find((note) => {
+        note.id === noteId ? note.checked = true : false;
+      });
+      localStorage.setItem('todo', JSON.stringify(todoList));
+    });
     toggleAll.checked = true;
-  } else if (completed.legth !== 0 && uncompleted.length === 0) {
-    for (let i = 0; i < completed.length; i++) {
-      const noteId = completed[i].parentNode.parentNode.id;
-      for (let j = 0; j < todoList.length; j++) {
-        if (todoList[j].id === noteId) {
-          todoList[j].checked = false;
-          myStorage.setItem('todo', JSON.stringify(todoList));
-        }
-      }
-    }
+  } else if (completed.length !== 0 && uncompleted.length === 0) {
+    completed.forEach((item) => {
+      const noteId = item.parentNode.parentNode.id;
+      todoList.find((note) => {
+        note.id === noteId ? note.checked = false : false;
+      });
+      localStorage.setItem('todo', JSON.stringify(todoList));
+    });
     toggleAll.checked = false;
   }
   showMyNotes();
@@ -422,24 +396,17 @@ function editNotes(editNote) {
 
     if (verification.length !== 0) {
       const listItem = editNote.parentNode;
-      for (let i = 0; i < todoList.length; i++) {
-        if (todoList[i].id === listItem.id) {
-          todoList[i].text = editNote.value;
-          myStorage.setItem('todo', JSON.stringify(todoList));
-          // listItem.children[0].style.display = '';
-        }
-      }
+      todoList.find((note) => { note.id === listItem.id ? note.text = editNote.value : false; });
+      localStorage.setItem('todo', JSON.stringify(todoList));
     }
     showMyNotes();
     renderRightNotes();
-    document.querySelector('.container').style.display = '';
-    list.style.display = '';
   } else if (editNote.value.length === 0) {
     const listItem = editNote.parentNode;
     const notes = todoList.filter((item) => item.id !== listItem.id);
     listItem.remove();
     todoList = notes;
-    myStorage.setItem('todo', JSON.stringify(todoList));
+    localStorage.setItem('todo', JSON.stringify(todoList));
   }
 }
 
@@ -469,31 +436,19 @@ list.addEventListener('click', (event) => {
       if (event.target.checked === false && completedNotesLink === 'completed') {
         const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
         note.classList.remove('completed');
-        for (let i = 0; i < todoList.length; i++) {
-          if (todoList[i].id === note.id) {
-            todoList[i].checked = false;
-            myStorage.setItem('todo', JSON.stringify(todoList));
-          }
-        }
+        todoList.find((item) => { item.id === note.id ? item.checked = false : false; });
+        localStorage.setItem('todo', JSON.stringify(todoList));
       }
       if (event.target.checked === true) {
         const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
         note.setAttribute('class', 'completed');
-        for (let i = 0; i < todoList.length; i++) {
-          if (todoList[i].id === event.target.parentNode.parentNode.id) {
-            todoList[i].checked = true;
-            myStorage.setItem('todo', JSON.stringify(todoList));
-          }
-        }
+        todoList.find((item) => { item.id === note.id ? item.checked = true : false; });
+        localStorage.setItem('todo', JSON.stringify(todoList));
       } else if (event.target.checked === false) {
         const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
         note.classList.remove('completed');
-        for (let i = 0; i < todoList.length; i++) {
-          if (todoList[i].id === note.id) {
-            todoList[i].checked = false;
-            myStorage.setItem('todo', JSON.stringify(todoList));
-          }
-        }
+        todoList.find((item) => { item.id === note.id ? item.checked = false : false; });
+        localStorage.setItem('todo', JSON.stringify(todoList));
       }
     }
   }

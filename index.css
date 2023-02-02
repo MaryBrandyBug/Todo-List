@@ -226,4 +226,7 @@ label {
     }
 }
 
+.current-link {
+    border: 2px solid rgba(175, 47, 47, 0.2);
+}
 

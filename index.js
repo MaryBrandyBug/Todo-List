@@ -1,3 +1,5 @@
+import { generateRandomId, checkLength } from './modules/utils.js';
+
 const addNewNote = document.querySelector('.new-note');
 const list = document.querySelector('.todo-list');
 const footer = document.querySelector('.footer');
@@ -40,24 +42,6 @@ function renderRightNotes() {
   if (list.children.length === 0) {
     footer.style.display = 'none';
     toggleAll.checked = false;
-  }
-}
-
-// ! Ф-ЦИЯ РАНДОМАЙЗЕР СЛУЧАЙНОГО БОЛЬШОГО ЧИСЛА
-function generateRandomId() {
-  const randomIdNumber = Math.round(Math.random() * 100000000000);
-  return randomIdNumber;
-}
-
-// ! Ф-ЦИЯ ПРОВЕРКИ НА ДЛИНУ ЗАМЕТКИ (НА ПУСТУЮ ЗАМЕТКУ)
-function checkLength() {
-  if (addNewNote.value) {
-    const verification = addNewNote.trim();
-    if (verification.length !== 0) {
-      return true;
-    }
-    addNewNote.value = '';
-    return false;
   }
 }
 
@@ -124,7 +108,7 @@ function showMyNotes() {
 
 // ! ДОБАВЛЕНИЕ ЗАМЕТКИ НА CLICK
 document.addEventListener('click', (event) => {
-  if (checkLength()) {
+  if (checkLength(addNewNote.value)) {
     if (event.target.className !== 'new-note') {
       if (event.target.tagName === 'INPUT') {
         event.target.checked = !event.target.checked;
@@ -132,14 +116,16 @@ document.addEventListener('click', (event) => {
       addNote();
     }
   }
+  addNewNote.value = '';
 });
 
 // ! ДОБАВЛЕНИЕ НА ENTER
 document.addEventListener('keydown', (event) => {
   if (event.code === 'Enter') {
-    if (checkLength()) {
+    if (checkLength(addNewNote.value)) {
       addNote();
     }
+    addNewNote.value = '';
   }
 });
 
@@ -190,31 +176,6 @@ list.addEventListener('change', (event) => {
     renderRightNotes();
   }
 });
-
-// ! ИЗМЕНЕНИЕ СПИСКА ЗАМЕТОК
-// list.addEventListener('change', () => {
-//   const allCompletedNotes = document.querySelectorAll('.completed');
-//   const needsToDo = footer.firstElementChild.firstElementChild;
-//   needsToDo.innerHTML = `${list.children.length - allCompletedNotes.length}`;
-
-//   const activeNotesLink = window.location.href.split('').slice(window.location.href.length - 6).join('');
-//   const completedNotes = document.querySelectorAll('input:checked');
-
-//   const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
-//   const activeNotes = document.querySelectorAll('input:not(:checked)');
-
-//   if (activeNotesLink === 'active') {
-//     for (let i = 0; i < completedNotes.length; i++) {
-//       completedNotes[i].parentNode.parentNode.style.display = 'none';
-//     }
-//   }
-
-//   if (completedNotesLink === 'completed') {
-//     for (let j = 1; j < activeNotes.length; j++) {
-//       // activeNotes[j].parentNode.parentNode.style.display = 'none';
-//     }
-//   }
-// });
 
 // ! АКТИВНЫЕ ЗАМЕТКИ
 footerMenu.addEventListener('click', (event) => {

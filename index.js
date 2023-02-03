@@ -1,4 +1,4 @@
-import { generateRandomId, checkLength } from './modules/utils.js';
+import { checkLength, generateRandomId } from "./modules/utils.js";
 
 const addNewNote = document.querySelector('.new-note');
 const list = document.querySelector('.todo-list');
@@ -320,7 +320,7 @@ list.addEventListener(('dblclick'), (event) => {
       newInputField.setAttribute('spellcheck', 'false');
       newInputField.style = `
       border-bottom: 1.5px solid transparent;
-      background: linear-gradient(90deg, rgb(202, 153, 153), rgb(225, 215, 216), rgb(210, 187, 196));    
+      background: linear-gradient(90deg, rgb(202, 153, 153), rgb(225, 215, 216), rgb(210, 187, 196));
       box-shadow: inset 0px 0px 0px 100vw #fff; /*Тень направленная внутрь контейнера, перекрывает ненужный фон и оставляет только рамку*/
       `;
       currentBlock.appendChild(newInputField);
@@ -337,7 +337,7 @@ list.addEventListener(('dblclick'), (event) => {
       const newInputField = document.createElement('input');
       newInputField.style = `
       border-bottom: 1.5px solid transparent;
-      background: linear-gradient(90deg, rgb(202, 153, 153), rgb(225, 215, 216), rgb(210, 187, 196)); 
+      background: linear-gradient(90deg, rgb(202, 153, 153), rgb(225, 215, 216), rgb(210, 187, 196));
       box-shadow: inset 0px 0px 0px 100vw #fff; /*Тень направленная внутрь контейнера, перекрывает ненужный фон и оставляет только рамку*/
       `;
       newInputField.setAttribute('value', `${noteTextTrim}`);

@@ -9,25 +9,23 @@ const completedNotesList = document.querySelector('.completed-notes');
 const activeNotesList = document.querySelector('.active-notes');
 const allNotesList = document.querySelector('.all-notes');
 const toggleAll = document.querySelector('.toggle-all');
+const currentLink = window.location.hash;
 
 const myStorage = JSON.parse(localStorage.getItem('todo'));
 let todoList = myStorage ?? [];
 
 // ! Ф-ЦИЯ ПОДГРУЖАЕТ ЗАМЕТКИ СООТВЕТСТВУЮЩИЕ АДРЕСУ СТРАНИЦЫ
 function renderRightNotes() {
-  const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
-  const activeNotesLink = window.location.href.split('').slice(window.location.href.length - 6).join('');
-
   const completedNotes = document.querySelectorAll('input.toggle:checked');
   const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
 
-  if (completedNotesLink === 'completed') {
+  if (currentLink === '#/completed') {
     completedNotesList.classList.add('current-link');
     allNotesList.classList.remove('current-link');
     activeNotesList.classList.remove('current-link');
     completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
     activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
-  } else if (activeNotesLink === 'active') {
+  } else if (currentLink === '#/active') {
     activeNotesList.classList.add('current-link');
     completedNotesList.classList.remove('current-link');
     allNotesList.classList.remove('current-link');
@@ -60,8 +58,7 @@ function addNote() {
   todoList.push(newNote);
   localStorage.setItem('todo', JSON.stringify(todoList));
 
-  const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
-  if (completedNotesLink === 'completed') {
+  if (currentLink === '#/completed') {
     newListElement.style.display = 'none';
     list.appendChild(newListElement);
     addNewNote.value = '';
@@ -154,23 +151,11 @@ list.addEventListener('change', (event) => {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.setAttribute('class', 'completed');
       todoList.find((item) => (item.id === event.target.parentNode.parentNode.id ? item.checked = true : false));
-      // for (let i = 0; i < todoList.length; i++) {
-      //   if (todoList[i].id === event.target.parentNode.parentNode.id) {
-      //     todoList[i].checked = true;
-      //     localStorage.setItem('todo', JSON.stringify(todoList));
-      //   }
-      // }
       localStorage.setItem('todo', JSON.stringify(todoList));
     } else {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.classList.remove('completed');
       todoList.find((item) => (item.id === note.id ? item.checked = false : false));
-      // for (let i = 0; i < todoList.length; i++) {
-      //   if (todoList[i].id === note.id) {
-      //     todoList[i].checked = false;
-      //     localStorage.setItem('todo', JSON.stringify(todoList));
-      //   }
-      // }
       localStorage.setItem('todo', JSON.stringify(todoList));
     }
     renderRightNotes();
@@ -393,8 +378,7 @@ document.addEventListener('keydown', (event) => {
 list.addEventListener('click', (event) => {
   if (document.querySelector('.edit')) {
     if (event.target.classList.value === 'toggle') {
-      const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
-      if (event.target.checked === false && completedNotesLink === 'completed') {
+      if (event.target.checked === false && currentLink === '#/completed') {
         const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
         note.classList.remove('completed');
         todoList.find((item) => { item.id === note.id ? item.checked = false : false; });

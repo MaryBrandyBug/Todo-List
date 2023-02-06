@@ -14,6 +14,16 @@ const currentLink = window.location.hash;
 const myStorage = JSON.parse(localStorage.getItem('todo'));
 let todoList = myStorage ?? [];
 
+// ! Ф-ЦИЯ toggleAll проверка
+const checkToggleAllBtnColor = () => {
+  const completed = document.querySelectorAll('input.toggle:checked');
+  if (completed.length === list.children.length) {
+    toggleAll.checked = true;
+  } else {
+    toggleAll.checked = false;
+  }
+};
+
 // ! Ф-ЦИЯ ПОДГРУЖАЕТ ЗАМЕТКИ СООТВЕТСТВУЮЩИЕ АДРЕСУ СТРАНИЦЫ
 const renderRightNotes = () => {
   const completedNotes = document.querySelectorAll('input.toggle:checked');
@@ -39,8 +49,8 @@ const renderRightNotes = () => {
 
   if (list.children.length === 0) {
     footer.style.display = 'none';
-    toggleAll.checked = false;
   }
+  checkToggleAllBtnColor();
 };
 
 // ! Ф-ЦИЯ ДОБАВЛЕНИЯ ЗАМЕТКИ
@@ -75,6 +85,9 @@ const addNote = () => {
   needsToDo.innerHTML = list.children.length - allCompletedNotes.length;
 
   footer.style.display = '';
+
+  const completed = document.querySelectorAll('input.toggle:checked');
+  checkToggleAllBtnColor();
 };
 
 // ! Ф-ЦИЯ ПОДГРУЖАЕТ ЗАМЕТКИ ИЗ LOCALSTORAGE
@@ -84,7 +97,7 @@ const showMyNotes = () => {
     notesList += `
     <li id=${note.id} ${note.checked ? 'class="completed"' : ''}>
       <div class="div">
-        <input type="checkbox" class="toggle" ${note.checked ? 'checked' : ''}>
+        <input type="checkbox" class="toggle" ${note.checked && 'checked'}>
         <label for="">${note.text}</label>
         <button class="deleteBtn"></button>
       </div>
@@ -95,12 +108,7 @@ const showMyNotes = () => {
     const needsToDo = footer.firstElementChild.firstElementChild;
     needsToDo.innerHTML = list.children.length - allCompletedNotes.length;
   });
-  const completed = document.querySelectorAll('input.toggle:checked');
-  if (completed.length === list.children.length) {
-    toggleAll.checked = true;
-  } else {
-    toggleAll.checked = false;
-  }
+  checkToggleAllBtnColor();
 };
 
 // ! ДОБАВЛЕНИЕ ЗАМЕТКИ НА CLICK
@@ -139,8 +147,9 @@ const deleteOneNote = (event) => {
 
     if (list.children.length === 0) {
       footer.style.display = 'none';
-      toggleAll.checked = false;
     }
+
+    checkToggleAllBtnColor();
   }
 };
 
@@ -183,11 +192,7 @@ const changeLinkByFooterButton = (event) => {
     }
   }
   const completed = document.querySelectorAll('input.toggle:checked');
-  if (completed.length === list.children.length) {
-    toggleAll.checked = true;
-  } else {
-    toggleAll.checked = false;
-  }
+  checkToggleAllBtnColor();
 };
 
 footerMenu.addEventListener('click', (event) => changeLinkByFooterButton(event));

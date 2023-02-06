@@ -1,4 +1,4 @@
-import { checkLength, generateRandomId } from "./modules/utils.js";
+import { checkLength, generateRandomId } from './modules/utils.js';
 
 const addNewNote = document.querySelector('.new-note');
 const list = document.querySelector('.todo-list');
@@ -9,25 +9,33 @@ const completedNotesList = document.querySelector('.completed-notes');
 const activeNotesList = document.querySelector('.active-notes');
 const allNotesList = document.querySelector('.all-notes');
 const toggleAll = document.querySelector('.toggle-all');
+const currentLink = window.location.hash;
 
 const myStorage = JSON.parse(localStorage.getItem('todo'));
 let todoList = myStorage ?? [];
 
-// ! Ф-ЦИЯ ПОДГРУЖАЕТ ЗАМЕТКИ СООТВЕТСТВУЮЩИЕ АДРЕСУ СТРАНИЦЫ
-function renderRightNotes() {
-  const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
-  const activeNotesLink = window.location.href.split('').slice(window.location.href.length - 6).join('');
+// ! Ф-ЦИЯ toggleAll проверка
+const checkToggleAllBtnColor = () => {
+  const completed = document.querySelectorAll('input.toggle:checked');
+  if (completed.length === list.children.length) {
+    toggleAll.checked = true;
+  } else {
+    toggleAll.checked = false;
+  }
+};
 
+// ! Ф-ЦИЯ ПОДГРУЖАЕТ ЗАМЕТКИ СООТВЕТСТВУЮЩИЕ АДРЕСУ СТРАНИЦЫ
+const renderRightNotes = () => {
   const completedNotes = document.querySelectorAll('input.toggle:checked');
   const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
 
-  if (completedNotesLink === 'completed') {
+  if (window.location.hash === '#/completed') {
     completedNotesList.classList.add('current-link');
     allNotesList.classList.remove('current-link');
     activeNotesList.classList.remove('current-link');
     completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
     activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
-  } else if (activeNotesLink === 'active') {
+  } else if (window.location.hash === '#/active') {
     activeNotesList.classList.add('current-link');
     completedNotesList.classList.remove('current-link');
     allNotesList.classList.remove('current-link');
@@ -41,12 +49,12 @@ function renderRightNotes() {
 
   if (list.children.length === 0) {
     footer.style.display = 'none';
-    toggleAll.checked = false;
   }
-}
+  checkToggleAllBtnColor();
+};
 
 // ! Ф-ЦИЯ ДОБАВЛЕНИЯ ЗАМЕТКИ
-function addNote() {
+const addNote = () => {
   const newListElement = document.createElement('li');
   newListElement.setAttribute('id', generateRandomId());
   newListElement.innerHTML = `
@@ -60,8 +68,7 @@ function addNote() {
   todoList.push(newNote);
   localStorage.setItem('todo', JSON.stringify(todoList));
 
-  const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
-  if (completedNotesLink === 'completed') {
+  if (currentLink === '#/completed') {
     newListElement.style.display = 'none';
     list.appendChild(newListElement);
     addNewNote.value = '';
@@ -78,16 +85,19 @@ function addNote() {
   needsToDo.innerHTML = list.children.length - allCompletedNotes.length;
 
   footer.style.display = '';
-}
+
+  const completed = document.querySelectorAll('input.toggle:checked');
+  checkToggleAllBtnColor();
+};
 
 // ! Ф-ЦИЯ ПОДГРУЖАЕТ ЗАМЕТКИ ИЗ LOCALSTORAGE
-function showMyNotes() {
+const showMyNotes = () => {
   let notesList = '';
   todoList.forEach((note) => {
     notesList += `
     <li id=${note.id} ${note.checked ? 'class="completed"' : ''}>
       <div class="div">
-        <input type="checkbox" class="toggle" ${note.checked ? 'checked' : ''}>
+        <input type="checkbox" class="toggle" ${note.checked && 'checked'}>
         <label for="">${note.text}</label>
         <button class="deleteBtn"></button>
       </div>
@@ -98,13 +108,8 @@ function showMyNotes() {
     const needsToDo = footer.firstElementChild.firstElementChild;
     needsToDo.innerHTML = list.children.length - allCompletedNotes.length;
   });
-  const completed = document.querySelectorAll('input.toggle:checked');
-  if (completed.length === list.children.length) {
-    toggleAll.checked = true;
-  } else {
-    toggleAll.checked = false;
-  }
-}
+  checkToggleAllBtnColor();
+};
 
 // ! ДОБАВЛЕНИЕ ЗАМЕТКИ НА CLICK
 document.addEventListener('click', (event) => {
@@ -130,7 +135,7 @@ document.addEventListener('keydown', (event) => {
 });
 
 // ! УДАЛЕНИЕ ЗАМЕТКИ
-list.addEventListener('click', (event) => {
+const deleteOneNote = (event) => {
   if (event.target.tagName === 'BUTTON' && addNewNote.value === '') {
     const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
     note.remove();
@@ -142,43 +147,36 @@ list.addEventListener('click', (event) => {
 
     if (list.children.length === 0) {
       footer.style.display = 'none';
-      toggleAll.checked = false;
     }
+
+    checkToggleAllBtnColor();
   }
-});
+};
+
+list.addEventListener('click', (event) => deleteOneNote(event));
 
 // ! ЗАМЕТКА ВЫПОЛНЕНА
-list.addEventListener('change', (event) => {
+const completeOneNote = (event) => {
   if (event.target.tagName === 'INPUT' && event.target.classList.value === 'toggle') {
     if (event.target.checked === true) {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.setAttribute('class', 'completed');
       todoList.find((item) => (item.id === event.target.parentNode.parentNode.id ? item.checked = true : false));
-      // for (let i = 0; i < todoList.length; i++) {
-      //   if (todoList[i].id === event.target.parentNode.parentNode.id) {
-      //     todoList[i].checked = true;
-      //     localStorage.setItem('todo', JSON.stringify(todoList));
-      //   }
-      // }
       localStorage.setItem('todo', JSON.stringify(todoList));
     } else {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.classList.remove('completed');
       todoList.find((item) => (item.id === note.id ? item.checked = false : false));
-      // for (let i = 0; i < todoList.length; i++) {
-      //   if (todoList[i].id === note.id) {
-      //     todoList[i].checked = false;
-      //     localStorage.setItem('todo', JSON.stringify(todoList));
-      //   }
-      // }
       localStorage.setItem('todo', JSON.stringify(todoList));
     }
     renderRightNotes();
   }
-});
+};
+
+list.addEventListener('change', (event) => completeOneNote(event));
 
 // ! АКТИВНЫЕ ЗАМЕТКИ
-footerMenu.addEventListener('click', (event) => {
+const changeLinkByFooterButton = (event) => {
   if (event.target.tagName === 'A') {
     const completedNotes = document.querySelectorAll('input.toggle:checked');
     const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
@@ -194,15 +192,13 @@ footerMenu.addEventListener('click', (event) => {
     }
   }
   const completed = document.querySelectorAll('input.toggle:checked');
-  if (completed.length === list.children.length) {
-    toggleAll.checked = true;
-  } else {
-    toggleAll.checked = false;
-  }
-});
+  checkToggleAllBtnColor();
+};
+
+footerMenu.addEventListener('click', (event) => changeLinkByFooterButton(event));
 
 // ! УДАЛЕНИЕ ВЫПОЛНЕННЫХ ДЕЛ
-clearCompletedBtn.addEventListener('click', () => {
+const deleteAllCompletedNotes = () => {
   if (addNewNote.value === '') {
     const completedNotes = document.querySelectorAll('input.toggle:checked');
     for (let i = 0; i < completedNotes.length; i++) {
@@ -216,39 +212,43 @@ clearCompletedBtn.addEventListener('click', () => {
       toggleAll.checked = false;
     }
   }
-});
+};
+
+clearCompletedBtn.addEventListener('click', () => deleteAllCompletedNotes());
 
 // ! ПОДГРУЗКА ВСЕХ ЗАМЕТОК
-window.addEventListener('load', () => {
-  showMyNotes();
-});
+window.addEventListener('load', () => showMyNotes());
 
 // ! ПОЯВЛЕНИЕ РАМКИ НА АКТИВНОЙ КНОПКЕ ПРИ ПЕРЕКЛЮЧЕНИИ
-completedNotesList.addEventListener('click', () => {
+const showComletedNotes = () => {
   completedNotesList.classList.add('current-link');
   allNotesList.classList.remove('current-link');
   activeNotesList.classList.remove('current-link');
-});
+};
 
-activeNotesList.addEventListener('click', () => {
+const showActiveNotes = () => {
   activeNotesList.classList.add('current-link');
   completedNotesList.classList.remove('current-link');
   allNotesList.classList.remove('current-link');
-});
+};
 
-allNotesList.addEventListener('click', () => {
+const showAllNotes = () => {
   allNotesList.classList.add('current-link');
   completedNotesList.classList.remove('current-link');
   activeNotesList.classList.remove('current-link');
-});
+};
+
+completedNotesList.addEventListener('click', () => showComletedNotes());
+
+activeNotesList.addEventListener('click', () => showActiveNotes());
+
+allNotesList.addEventListener('click', () => showAllNotes());
 
 // ! РЕНДЕРИМ ВЕРНУЮ СТРАНИЦУ ПРИ ПЕРЕЗАГРУЗКЕ (ALL/ACTIVE/COMPLETED)
-window.addEventListener('load', () => {
-  renderRightNotes();
-});
+window.addEventListener('load', () => renderRightNotes());
 
 // ! ОТМЕТИТЬ ВСЕ ЗАМЕТКИ
-toggleAll.addEventListener('click', () => {
+const changeAllList = () => {
   const completed = document.querySelectorAll('input.toggle:checked');
   const uncompleted = document.querySelectorAll('input.toggle:not(:checked)');
 
@@ -284,10 +284,12 @@ toggleAll.addEventListener('click', () => {
   }
   showMyNotes();
   renderRightNotes();
-});
+};
+
+toggleAll.addEventListener('click', () => changeAllList());
 
 // ! РЕДАКТИРОВАНИЕ ЗАМЕТКИ
-list.addEventListener(('dblclick'), (event) => {
+const editOneNote = (event) => {
   if (event.target.tagName !== 'BUTTON' && event.target.tagName !== 'INPUT') {
     if (event.target.tagName === 'DIV' && !document.querySelector('.edit')) {
       const currentBlock = event.target;
@@ -347,10 +349,12 @@ list.addEventListener(('dblclick'), (event) => {
       newInputField.focus();
     }
   }
-});
+};
+
+list.addEventListener(('dblclick'), (event) => editOneNote(event));
 
 // toDo ФУНКЦИЯ ДЛЯ ДОБАВЛЕНИЯ
-function editNotes(editNote) {
+const editNotes = (editNote) => {
   if (editNote.value) {
     const newNoteText = editNote.value.split(' ');
     const verification = newNoteText.filter((el) => el !== ' ' && el !== '');
@@ -368,8 +372,10 @@ function editNotes(editNote) {
     listItem.remove();
     todoList = notes;
     localStorage.setItem('todo', JSON.stringify(todoList));
+    showMyNotes();
+    renderRightNotes();
   }
-}
+};
 
 document.addEventListener('click', (event) => {
   const editNote = document.querySelector('.edit');
@@ -390,11 +396,10 @@ document.addEventListener('keydown', (event) => {
 });
 
 // ! ПРИ ЗАПОЛНЕННОМ ИНПУТЕ РЕДАКТИРОВАНИЯ НАЖИМАЕТСЯ ЧЕКБОКС ОТ ЗАМЕТКИ
-list.addEventListener('click', (event) => {
+const addEditedNoteCheckbox = (event) => {
   if (document.querySelector('.edit')) {
     if (event.target.classList.value === 'toggle') {
-      const completedNotesLink = window.location.href.split('').slice(window.location.href.length - 9).join('');
-      if (event.target.checked === false && completedNotesLink === 'completed') {
+      if (event.target.checked === false && currentLink === '#/completed') {
         const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
         note.classList.remove('completed');
         todoList.find((item) => { item.id === note.id ? item.checked = false : false; });
@@ -413,4 +418,6 @@ list.addEventListener('click', (event) => {
       }
     }
   }
-});
+};
+
+list.addEventListener('click', (event) => addEditedNoteCheckbox(event));

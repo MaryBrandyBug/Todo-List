@@ -11,6 +11,6 @@ export function checkLength(note) {
     if (verification.length !== 0) {
       return true;
     }
-    return false;
   }
+  return false;
 }

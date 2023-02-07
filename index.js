@@ -40,22 +40,24 @@ const checkToggleAllBtnColor = () => {
 };
 
 // ! Ф-ЦИИ ДЛЯ ПОЯВЛЕНИЯ РАМКИ НА КНОПКЕ АКТИВНОЙ СЕЙЧАС СТРАНИЦЫ
-const showComletedNotes = () => {
-  completedNotesList.classList.add('current-link');
-  allNotesList.classList.remove('current-link');
-  activeNotesList.classList.remove('current-link');
-};
+const showNotes = (showCompleted, showAll, showActive) => {
+  if (showCompleted) {
+    completedNotesList.classList.add('current-link');
+    allNotesList.classList.remove('current-link');
+    activeNotesList.classList.remove('current-link');
+  }
 
-const showActiveNotes = () => {
-  activeNotesList.classList.add('current-link');
-  completedNotesList.classList.remove('current-link');
-  allNotesList.classList.remove('current-link');
-};
+  if (showAll) {
+    allNotesList.classList.add('current-link');
+    completedNotesList.classList.remove('current-link');
+    activeNotesList.classList.remove('current-link');
+  }
 
-const showAllNotes = () => {
-  allNotesList.classList.add('current-link');
-  completedNotesList.classList.remove('current-link');
-  activeNotesList.classList.remove('current-link');
+  if (showActive) {
+    activeNotesList.classList.add('current-link');
+    completedNotesList.classList.remove('current-link');
+    allNotesList.classList.remove('current-link');
+  }
 };
 
 // ! Ф-ЦИЯ ПОДГРУЖАЕТ ЗАМЕТКИ СООТВЕТСТВУЮЩИЕ АДРЕСУ СТРАНИЦЫ
@@ -64,15 +66,15 @@ const renderRightNotes = () => {
   const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
 
   if (window.location.hash === '#/completed') {
-    showComletedNotes();
+    showNotes(true, false, false);
     completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
     activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
-  } else if (window.location.hash === '#/active') {
-    showActiveNotes();
+  } if (window.location.hash === '#/active') {
+    showNotes(false, false, true);
     activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
     completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
   } else {
-    showAllNotes();
+    showNotes(false, true, false);
   }
 
   if (list.children.length === 0) {
@@ -176,7 +178,7 @@ list.addEventListener('click', (event) => deleteOneNote(event));
 // ! ЗАМЕТКА ВЫПОЛНЕНА
 const completeOneNote = (event) => {
   if (event.target.tagName === 'INPUT' && event.target.classList.value === 'toggle') {
-    if (event.target.checked === true) {
+    if (event.target.checked) {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
       note.setAttribute('class', 'completed');
       todoList.find((item) => (item.id === event.target.parentNode.parentNode.id ? item.checked = true : false));
@@ -238,11 +240,11 @@ clearCompletedBtn.addEventListener('click', () => deleteAllCompletedNotes());
 window.addEventListener('load', () => showMyNotes());
 
 // ! ПОЯВЛЕНИЕ РАМКИ НА АКТИВНОЙ КНОПКЕ ПРИ ПЕРЕКЛЮЧЕНИИ
-completedNotesList.addEventListener('click', () => showComletedNotes());
+completedNotesList.addEventListener('click', () => showNotes(true, false, false));
 
-activeNotesList.addEventListener('click', () => showActiveNotes());
+activeNotesList.addEventListener('click', () => showNotes(false, false, true));
 
-allNotesList.addEventListener('click', () => showAllNotes());
+allNotesList.addEventListener('click', () => showNotes(false, true, false));
 
 // ! РЕНДЕРИМ ВЕРНУЮ СТРАНИЦУ ПРИ ПЕРЕЗАГРУЗКЕ (ALL/ACTIVE/COMPLETED)
 window.addEventListener('load', () => renderRightNotes());
@@ -378,14 +380,15 @@ const addEditedNoteCheckbox = (event) => {
     if (event.target.classList.value === 'toggle') {
       const note = document.getElementById(`${event.target.parentNode.parentNode.id}`);
 
-      if (event.target.checked === false && currentLink === '#/completed') {
+      if (!event.target.checked && currentLink === '#/completed') {
         note.classList.remove('completed');
         addToStorage(note.id, false);
       }
-      if (event.target.checked === true) {
+      if (event.target.checked) {
         note.setAttribute('class', 'completed');
         addToStorage(note.id, true);
-      } else if (event.target.checked === false) {
+      }
+      if (!event.target.checked) {
         note.classList.remove('completed');
         addToStorage(note.id, false);
       }

@@ -24,27 +24,40 @@ const checkToggleAllBtnColor = () => {
   }
 };
 
+// ! Ф-ЦИИ ДЛЯ ПОЯВЛЕНИЯ РАМКИ НА КНОПКЕ АКТИВНОЙ СЕЙЧАС СТРАНИЦЫ
+const showComletedNotes = () => {
+  completedNotesList.classList.add('current-link');
+  allNotesList.classList.remove('current-link');
+  activeNotesList.classList.remove('current-link');
+};
+
+const showActiveNotes = () => {
+  activeNotesList.classList.add('current-link');
+  completedNotesList.classList.remove('current-link');
+  allNotesList.classList.remove('current-link');
+};
+
+const showAllNotes = () => {
+  allNotesList.classList.add('current-link');
+  completedNotesList.classList.remove('current-link');
+  activeNotesList.classList.remove('current-link');
+};
+
 // ! Ф-ЦИЯ ПОДГРУЖАЕТ ЗАМЕТКИ СООТВЕТСТВУЮЩИЕ АДРЕСУ СТРАНИЦЫ
 const renderRightNotes = () => {
   const completedNotes = document.querySelectorAll('input.toggle:checked');
   const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
 
   if (window.location.hash === '#/completed') {
-    completedNotesList.classList.add('current-link');
-    allNotesList.classList.remove('current-link');
-    activeNotesList.classList.remove('current-link');
+    showComletedNotes();
     completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
     activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
   } else if (window.location.hash === '#/active') {
-    activeNotesList.classList.add('current-link');
-    completedNotesList.classList.remove('current-link');
-    allNotesList.classList.remove('current-link');
+    showActiveNotes();
     activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
     completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
   } else {
-    allNotesList.classList.add('current-link');
-    completedNotesList.classList.remove('current-link');
-    activeNotesList.classList.remove('current-link');
+    showAllNotes();
   }
 
   if (list.children.length === 0) {
@@ -183,15 +196,16 @@ const changeLinkByFooterButton = (event) => {
     if (event.target.innerHTML === 'Active') {
       activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
       completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
-    } else if (event.target.innerHTML === 'Completed') {
+    }
+    if (event.target.innerHTML === 'Completed') {
       completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
       activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
-    } else if (event.target.innerHTML === 'All') {
+    }
+    if (event.target.innerHTML === 'All') {
       completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
       activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
     }
   }
-  const completed = document.querySelectorAll('input.toggle:checked');
   checkToggleAllBtnColor();
 };
 
@@ -201,12 +215,11 @@ footerMenu.addEventListener('click', (event) => changeLinkByFooterButton(event))
 const deleteAllCompletedNotes = () => {
   if (addNewNote.value === '') {
     const completedNotes = document.querySelectorAll('input.toggle:checked');
-    for (let i = 0; i < completedNotes.length; i++) {
-      const noteId = completedNotes[i].parentNode.parentNode.id;
-      todoList = todoList.filter((item) => item.id !== noteId);
+    completedNotes.forEach((note) => {
+      todoList = todoList.filter((item) => item.id !== note.parentNode.parentNode.id);
       localStorage.setItem('todo', JSON.stringify(todoList));
-      completedNotes[i].parentNode.parentNode.remove();
-    }
+      note.parentNode.parentNode.remove();
+    });
     if (list.children.length === 0) {
       footer.style.display = 'none';
       toggleAll.checked = false;
@@ -220,24 +233,6 @@ clearCompletedBtn.addEventListener('click', () => deleteAllCompletedNotes());
 window.addEventListener('load', () => showMyNotes());
 
 // ! ПОЯВЛЕНИЕ РАМКИ НА АКТИВНОЙ КНОПКЕ ПРИ ПЕРЕКЛЮЧЕНИИ
-const showComletedNotes = () => {
-  completedNotesList.classList.add('current-link');
-  allNotesList.classList.remove('current-link');
-  activeNotesList.classList.remove('current-link');
-};
-
-const showActiveNotes = () => {
-  activeNotesList.classList.add('current-link');
-  completedNotesList.classList.remove('current-link');
-  allNotesList.classList.remove('current-link');
-};
-
-const showAllNotes = () => {
-  allNotesList.classList.add('current-link');
-  completedNotesList.classList.remove('current-link');
-  activeNotesList.classList.remove('current-link');
-};
-
 completedNotesList.addEventListener('click', () => showComletedNotes());
 
 activeNotesList.addEventListener('click', () => showActiveNotes());
@@ -263,7 +258,9 @@ const changeAllList = () => {
       localStorage.setItem('todo', JSON.stringify(todoList));
     });
     toggleAll.checked = true;
-  } else if (completed.length === 0 && uncompleted.length !== 0) {
+  }
+
+  if (completed.length === 0 && uncompleted.length !== 0) {
     uncompleted.forEach((item) => {
       const noteId = item.parentNode.parentNode.id;
       todoList.find((note) => {
@@ -272,7 +269,9 @@ const changeAllList = () => {
       localStorage.setItem('todo', JSON.stringify(todoList));
     });
     toggleAll.checked = true;
-  } else if (completed.length !== 0 && uncompleted.length === 0) {
+  }
+
+  if (completed.length !== 0 && uncompleted.length === 0) {
     completed.forEach((item) => {
       const noteId = item.parentNode.parentNode.id;
       todoList.find((note) => {

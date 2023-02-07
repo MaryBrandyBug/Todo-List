@@ -32,7 +32,7 @@ const countNotCheckedNotes = () => {
 // ! Ф-ЦИЯ toggleAll проверка
 const checkToggleAllBtnColor = () => {
   const completed = document.querySelectorAll('input.toggle:checked');
-  if (completed.length === list.children.length) {
+  if (completed.length === list.children.length && list.children.length !== 0) {
     toggleAll.checked = true;
   } else {
     toggleAll.checked = false;

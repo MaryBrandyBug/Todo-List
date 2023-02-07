@@ -215,12 +215,11 @@ footerMenu.addEventListener('click', (event) => changeLinkByFooterButton(event))
 const deleteAllCompletedNotes = () => {
   if (addNewNote.value === '') {
     const completedNotes = document.querySelectorAll('input.toggle:checked');
-    for (let i = 0; i < completedNotes.length; i++) {
-      const noteId = completedNotes[i].parentNode.parentNode.id;
-      todoList = todoList.filter((item) => item.id !== noteId);
+    completedNotes.forEach((note) => {
+      todoList = todoList.filter((item) => item.id !== note.parentNode.parentNode.id);
       localStorage.setItem('todo', JSON.stringify(todoList));
-      completedNotes[i].parentNode.parentNode.remove();
-    }
+      note.parentNode.parentNode.remove();
+    });
     if (list.children.length === 0) {
       footer.style.display = 'none';
       toggleAll.checked = false;

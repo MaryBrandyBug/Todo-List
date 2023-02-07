@@ -40,20 +40,20 @@ const checkToggleAllBtnColor = () => {
 };
 
 // ! Ф-ЦИИ ДЛЯ ПОЯВЛЕНИЯ РАМКИ НА КНОПКЕ АКТИВНОЙ СЕЙЧАС СТРАНИЦЫ
-const showNotes = (showCompleted, showAll, showActive) => {
-  if (showCompleted) {
+const showNotes = (route) => {
+  if (route === '#/completed') {
     completedNotesList.classList.add('current-link');
     allNotesList.classList.remove('current-link');
     activeNotesList.classList.remove('current-link');
   }
 
-  if (showAll) {
+  if (route === '') {
     allNotesList.classList.add('current-link');
     completedNotesList.classList.remove('current-link');
     activeNotesList.classList.remove('current-link');
   }
 
-  if (showActive) {
+  if (route === '#/active') {
     activeNotesList.classList.add('current-link');
     completedNotesList.classList.remove('current-link');
     allNotesList.classList.remove('current-link');
@@ -66,51 +66,20 @@ const renderRightNotes = () => {
   const activeNotes = document.querySelectorAll('input.toggle:not(:checked)');
 
   if (window.location.hash === '#/completed') {
-    showNotes(true, false, false);
+    showNotes('#/completed');
     completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
     activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
   } if (window.location.hash === '#/active') {
-    showNotes(false, false, true);
+    showNotes('#/active');
     activeNotes.forEach((note) => { note.parentNode.parentNode.style.display = ''; });
     completedNotes.forEach((note) => { note.parentNode.parentNode.style.display = 'none'; });
   } else {
-    showNotes(false, true, false);
+    showNotes('');
   }
 
   if (list.children.length === 0) {
     footer.style.display = 'none';
   }
-  checkToggleAllBtnColor();
-};
-
-// ! Ф-ЦИЯ ДОБАВЛЕНИЯ ЗАМЕТКИ
-const addNote = () => {
-  const newListElement = document.createElement('li');
-  newListElement.setAttribute('id', generateRandomId());
-  newListElement.innerHTML = `
-  <div class="div">
-    <input type="checkbox" class="toggle">
-    <label for="">${addNewNote.value}</label>
-    <button class="deleteBtn"></button>
-  </div>`;
-
-  const newNote = { text: addNewNote.value, checked: false, id: newListElement.id };
-  todoList.push(newNote);
-  localStorage.setItem('todo', JSON.stringify(todoList));
-
-  if (currentLink === '#/completed') {
-    newListElement.style.display = 'none';
-    list.appendChild(newListElement);
-    addNewNote.value = '';
-
-    countNotCheckedNotes();
-  }
-  list.appendChild(newListElement);
-  addNewNote.value = '';
-
-  countNotCheckedNotes();
-  footer.style.display = '';
-
   checkToggleAllBtnColor();
 };
 
@@ -130,6 +99,38 @@ const showMyNotes = () => {
     list.innerHTML = notesList;
     countNotCheckedNotes();
   });
+  checkToggleAllBtnColor();
+};
+
+// ! Ф-ЦИЯ ДОБАВЛЕНИЯ ЗАМЕТКИ
+const addNote = () => {
+  const newListElement = document.createElement('li');
+  newListElement.setAttribute('id', generateRandomId());
+  newListElement.innerHTML = `
+  <div class="div">
+    <input type="checkbox" class="toggle">
+    <label for="">${addNewNote.value}</label>
+    <button class="deleteBtn"></button>
+  </div>`;
+
+  const newNote = { text: addNewNote.value, checked: false, id: newListElement.id };
+  todoList.push(newNote);
+  localStorage.setItem('todo', JSON.stringify(todoList));
+
+  const correctHash = window.location.hash;
+  if (correctHash === '#/completed') {
+    newListElement.style.display = 'none';
+    list.appendChild(newListElement);
+    addNewNote.value = '';
+
+    countNotCheckedNotes();
+  }
+  list.appendChild(newListElement);
+  addNewNote.value = '';
+
+  countNotCheckedNotes();
+  footer.style.display = '';
+
   checkToggleAllBtnColor();
 };
 
@@ -240,11 +241,11 @@ clearCompletedBtn.addEventListener('click', () => deleteAllCompletedNotes());
 window.addEventListener('load', () => showMyNotes());
 
 // ! ПОЯВЛЕНИЕ РАМКИ НА АКТИВНОЙ КНОПКЕ ПРИ ПЕРЕКЛЮЧЕНИИ
-completedNotesList.addEventListener('click', () => showNotes(true, false, false));
+completedNotesList.addEventListener('click', () => showNotes('#/completed'));
 
-activeNotesList.addEventListener('click', () => showNotes(false, false, true));
+activeNotesList.addEventListener('click', () => showNotes('#/active'));
 
-allNotesList.addEventListener('click', () => showNotes(false, true, false));
+allNotesList.addEventListener('click', () => showNotes(''));
 
 // ! РЕНДЕРИМ ВЕРНУЮ СТРАНИЦУ ПРИ ПЕРЕЗАГРУЗКЕ (ALL/ACTIVE/COMPLETED)
 window.addEventListener('load', () => renderRightNotes());

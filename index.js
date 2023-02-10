@@ -398,3 +398,5 @@ const addEditedNoteCheckbox = (event) => {
 };
 
 list.addEventListener('click', (event) => addEditedNoteCheckbox(event));
+
+console.log('hello world test');
